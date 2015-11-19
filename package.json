@@ -1,0 +1,26 @@
+{
+  "name": "golaunch",
+  "description": "",
+  "main": "app/app.js",
+  "author": "Kevin Darlington <kevin@outroot.com>",
+  "scripts": {
+    "start": "node_modules/.bin/electron ."
+  },
+  "private": true,
+  "dependencies": {
+    "concat-stream": "^1.5.1",
+    "install": "^0.2.6",
+    "mithril": "git://github.com/lhorie/mithril.js.git#next",
+    "mousetrap": "^1.5.3",
+    "npm": "^3.3.12",
+    "toml": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.1.18",
+    "babel-plugin-mjsx": "^1.0.3",
+    "electron-packager": "^5.1.1",
+    "electron-prebuilt": "^0.35.0",
+    "gobble": "^0.10.2",
+    "gobble-babel": "^5.5.8"
+  }
+}

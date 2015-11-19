@@ -1,0 +1,9 @@
+name="Programs"
+id="1e1df3f5-cf65-4b82-ab23-3a010bfa335b"
+description="Search and execute programs"
+author="Kevin Darlington <kevin@outroot.com>"
+version="0.0.1"
+type="stdio"
+main="golaunch-programs.exe"
+arguments=["run"]
+icon="icon.png"

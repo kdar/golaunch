@@ -1,0 +1,14 @@
+{
+  "name": "golaunch-sdk",
+  "version": "0.0.1",
+  "description": "JavaScript SDK for GoLaunch",
+  "main": "sdk.js",
+  "scripts": {
+    "test": "node_modules/.bin/intern-client.cmd config=tests/intern"
+  },
+  "author": "Kevin Darlington <kevin@outroot.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "intern": "^3.0.6"
+  }
+}
