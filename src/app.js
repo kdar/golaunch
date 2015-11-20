@@ -55,7 +55,12 @@ app.on('ready', function() {
     'title-bar-style': 'hidden',
     'always-on-top': true,
     frame: false,
-    resizable: false
+    resizable: false,
+    'web-preferences': {
+      'directWrite': process.platform === 'win32',
+      'experimental-features': true,
+      'overlayScrollbars': process.platform === 'win32'
+    }
     //show: false
   });
 
@@ -72,7 +77,7 @@ app.on('ready', function() {
   });
 
   mainWindow.on('blur', function() {
-    mainWindow.hide();
+    //mainWindow.hide();
   });
 
   // Emitted when the window is closed.
