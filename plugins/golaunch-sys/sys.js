@@ -57,9 +57,11 @@ var Plugin = function() {
         }
       }
 
-      self.emit('response', {
-        'result': results
-      });
+      if (results.length > 0) {
+        self.emit('response', {
+          'result': results
+        });
+      }
     } else if (data.method == "action") {
       if (data.params.data == "restart") {
         const args = process.argv.slice(1);

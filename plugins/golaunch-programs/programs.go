@@ -112,13 +112,15 @@ func main() {
 					json.Unmarshal(v.Params, &params)
 
 					results := catalog.Query(params[0])
-					msg := sdk.Response{
-						Result: results,
-					}
+					if results != nil && len(results) > 0 {
+						msg := sdk.Response{
+							Result: results,
+						}
 
-					start := time.Now()
-					enc.Encode(msg)
-					fmt.Fprintf(os.Stderr, "json encoding: %v\n", time.Now().Sub(start))
+						start := time.Now()
+						enc.Encode(msg)
+						fmt.Fprintf(os.Stderr, "json encoding: %v\n", time.Now().Sub(start))
+					}
 
 					// start = time.Now()
 					// a.Reset()
