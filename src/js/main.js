@@ -17,18 +17,14 @@ var AppVm = (function() {
   return vm;
 }())
 
+AppVm.init();
+
 document.querySelector("#theme").innerHTML = themeManager.get();
 
-// var resultsCount = 0;
+var resultsCount = 0;
 pluginManager.on('query-results', function(results) {
   AppVm.queryResults(results);
   m.redraw();
-  // AppVm.queryResults([{
-  //   image: "",
-  //   title: "Done: " + resultsCount++,
-  //   subtitle: "",
-  //   score: 300,
-  // }]);
 });
 
 function isScrolledIntoView(element, parent) {
@@ -98,8 +94,6 @@ var App = {
   controller: function() {
     var ctrl = this;
 
-    AppVm.init();
-
     ctrl.selected = m.prop(0);
 
     ctrl.doAction = function() {
@@ -137,11 +131,40 @@ var App = {
       ctrl.searchText.focus();
     };
 
-    ctrl.queryResultsConfig = function() {
+
+
+    ctrl.queryResultsConfig = function(el, isInitialized) {
+      // This is a workaround since electron does not support click-through with
+      // transparent windows. Once that is implemented, we can get rid of resizing
+      // the browser window.
       if (AppVm.queryResults().length != 0) {
         remote.getCurrentWindow().setSize(baseSize[0], baseSize[1] + ctrl.queryResults.offsetHeight);
       } else {
         remote.getCurrentWindow().setSize(baseSize[0], baseSize[1]);
+      }
+
+      if (!isInitialized) {
+        // sub title scrolling
+        var slideTimer, slide = function(el) {
+          el.scrollLeft += 1;
+          if (el.scrollLeft < el.scrollWidth) {
+            slideTimer = setTimeout(function() {slide(el);}, 8);
+          }
+        };
+        el.onmouseover = el.onmouseout = function(e) {
+          if (e.target.tagName != "H2") {
+            return;
+          }
+          var over = e.type === 'mouseover';
+          clearTimeout(slideTimer);
+          if (over) {
+            e.target.classList.remove("hiding");
+            slide(e.target);
+          } else {
+            e.target.classList.add("hiding");
+            e.target.scrollLeft = 0;
+          }
+        }
       }
     };
 

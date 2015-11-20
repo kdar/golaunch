@@ -23,6 +23,10 @@ var PluginManager = function() {
     //   self.emit('plugin_response', data);
     // });
 
+    // if (!data.result || data.result.length == 0) {
+    //   return;
+    // }
+
     queryResults.push.apply(queryResults, data.result);
 
     queryResults.sort(function(a, b) {

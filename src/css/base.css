@@ -1,0 +1,9 @@
+.hiding {
+  text-overflow: ellipsis;
+}
+
+.query-results ul li h2 {
+  overflow: hidden;
+  text-overflow: initial;
+  white-space: nowrap;
+}
