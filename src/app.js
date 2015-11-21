@@ -47,7 +47,7 @@ app.on('ready', function() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 500,
+    width: 800,
     height: 80,
     'min-width': 500,
     'min-height': 80,
@@ -56,12 +56,12 @@ app.on('ready', function() {
     'always-on-top': true,
     frame: false,
     resizable: false,
+    show: false,
     'web-preferences': {
       'directWrite': process.platform === 'win32',
       'experimental-features': true,
       'overlayScrollbars': process.platform === 'win32'
     }
-    //show: false
   });
 
   //mainWindow.setMenu(null);
@@ -77,7 +77,7 @@ app.on('ready', function() {
   });
 
   mainWindow.on('blur', function() {
-    //mainWindow.hide();
+    mainWindow.hide();
   });
 
   // Emitted when the window is closed.

@@ -1,0 +1,14 @@
+namespace flatapi;
+
+union AnyResult { QueryResult }
+
+table Result {
+  result:AnyResult;
+}
+
+table Response {
+  id:string;
+	result:[Result];
+}
+
+root_type Response;

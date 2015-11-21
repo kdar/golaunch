@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	sdk "golaunch/sdk/go"
+	"golaunch/sdk/go/idletime"
 	"golaunch/sdk/go/system"
 	"log"
 	"os"
@@ -35,12 +36,14 @@ func (s *Source) containsExt(ext string) bool {
 }
 
 type Config struct {
-	MaxResults    int           `toml:"max_results"`
-	CacheInMemory bool          `toml:"cache_in_memory"`
-	ScanInterval  string        `toml:"scan_interval"`
-	scanInterval  time.Duration `toml:"-"`
-	ScanOnStartup bool          `toml:"scan_on_startup"`
-	Sources       []Source      `toml:"sources"`
+	MaxResults     int           `toml:"max_results"`
+	CacheInMemory  bool          `toml:"cache_in_memory"`
+	ScanInterval   string        `toml:"scan_interval"`
+	scanInterval   time.Duration `toml:"-"`
+	ScanOnStartup  bool          `toml:"scan_on_startup"`
+	ScanWhenIdle   bool          `toml:"scan_when_idle"`
+	MaxScansPerRun int           `toml:"max_scans_per_run"`
+	Sources        []Source      `toml:"sources"`
 }
 
 func main() {
@@ -82,9 +85,26 @@ func main() {
 
 	if cfg.scanInterval != 0 {
 		go func() {
+			scanCount := 0
 			for {
 				time.Sleep(cfg.scanInterval)
+				if cfg.ScanWhenIdle {
+					for {
+						idle, _ := idletime.Get()
+						if idle < cfg.scanInterval {
+							time.Sleep(cfg.scanInterval - idle)
+						} else {
+							break
+						}
+					}
+				}
+
 				catalog.Index()
+				scanCount += 1
+
+				if scanCount >= cfg.MaxScansPerRun {
+					return
+				}
 			}
 		}()
 	}

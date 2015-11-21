@@ -1,0 +1,11 @@
+namespace flatapi;
+
+table QueryResult {
+	image:string;
+	title:string;
+	subtitle:string;
+	score:int;
+	query:string;
+}
+
+root_type QueryResult;

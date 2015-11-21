@@ -131,8 +131,6 @@ var App = {
       ctrl.searchText.focus();
     };
 
-
-
     ctrl.queryResultsConfig = function(el, isInitialized) {
       // This is a workaround since electron does not support click-through with
       // transparent windows. Once that is implemented, we can get rid of resizing

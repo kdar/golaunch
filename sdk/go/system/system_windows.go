@@ -3,7 +3,7 @@ package system
 import (
 	"bytes"
 	"encoding/base64"
-	"golaunch/internal/extracticon"
+	"golaunch/sdk/go/extracticon"
 	"image/png"
 	"log"
 	"os"

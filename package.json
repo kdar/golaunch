@@ -1,7 +1,8 @@
 {
   "name": "golaunch",
+  "version": "0.0.1",
   "description": "",
-  "main": "app/app.js",
+  "main": "index.js",
   "author": "Kevin Darlington <kevin@outroot.com>",
   "scripts": {
     "start": "node_modules/.bin/electron ."
