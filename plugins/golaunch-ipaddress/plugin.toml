@@ -1,0 +1,8 @@
+name="IP Address"
+id="32bb0d89-62ad-4db0-91f6-f653ffc1560f"
+description="Retrieve your local and external ip address."
+author="Kevin Darlington <kevin@outroot.com>"
+version="0.0.1"
+type="js"
+main="ipaddress.js"
+icon="icon.png"

@@ -10,7 +10,9 @@
   "private": true,
   "dependencies": {
     "concat-stream": "^1.5.1",
+    "external-ip": "^0.2.4",
     "install": "^0.2.6",
+    "ip": "^1.1.0",
     "mithril": "git://github.com/lhorie/mithril.js.git#next",
     "mousetrap": "^1.5.3",
     "npm": "^3.3.12",
