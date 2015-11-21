@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+
+<Local>
+
+	<!-- basic info to display in updater-->
+	<Label>MiniCap</Label>
+	<IconFile>MiniCap.exe</IconFile>
+
+
+	<!-- version info of locally installed current version, and simple remote version file -->
+	<Version>1.32.01</Version>
+	<VersionFileRemote>http://www.donationcoder.com/Software/Mouser/MiniCap/pad/versioninfo.xml</VersionFileRemote>
+
+
+	<!-- where to get more info about the app remotely, only queried once an update is discovered -->
+	<InfoFileRemote>http://www.donationcoder.com/Software/Mouser/MiniCap/pad/pad_file.xml</InfoFileRemote>
+	<WebPage>http://www.donationcoder.com/Software/Mouser/MiniCap/index.html</WebPage>
+
+	<!-- ok how to conduct updates; could be: "Run" (download and run program), or "Visit" (visit website), or "Unzip" (download zip and unpack over files) -->
+	<UpdateMethod>run</UpdateMethod>
+	<CloseForUpdate>MiniCap.exe</CloseForUpdate>
+	<UpdateFile>http://www.donationcoder.com/Software/Mouser/MiniCap/downloads/MiniCapSetup.exe</UpdateFile>
+
+</Local>
