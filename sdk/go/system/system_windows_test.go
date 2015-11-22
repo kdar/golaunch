@@ -12,9 +12,9 @@ func TestResolveLink(t *testing.T) {
 	a := assertions.New(t)
 
 	sys := NewSystem()
-	path := sys.ResolveLink("testdata/Start Tor Browser.lnk")
+	path := sys.ResolveLink("testdata/Pidgin.lnk")
 
-	a.So(path, should.Equal, "D:\\Program Files\\Tor Browser\\Browser\\firefox.exe")
+	a.So(path, should.Equal, "D:\\Program Files (x86)\\Pidgin\\pidgin.exe")
 }
 
 func TestResolveLinkConcurrent(t *testing.T) {
@@ -26,8 +26,8 @@ func TestResolveLinkConcurrent(t *testing.T) {
 	for x := 0; x < 10; x++ {
 		wg.Add(1)
 		go func() {
-			path := sys.ResolveLink("testdata/Start Tor Browser.lnk")
-			a.So(path, should.Equal, "D:\\Program Files\\Tor Browser\\Browser\\firefox.exe")
+			path := sys.ResolveLink("testdata/Pidgin.lnk")
+			a.So(path, should.Equal, "D:\\Program Files (x86)\\Pidgin\\pidgin.exe")
 			wg.Done()
 		}()
 	}
@@ -39,7 +39,7 @@ func TestGetAppIcon(t *testing.T) {
 	a := assertions.New(t)
 
 	sys := NewSystem()
-	img, err := sys.GetAppIcon("testdata/Smite.lnk")
+	img, err := sys.GetAppIcon("testdata/Pidgin.lnk")
 
 	a.So(img, should.NotBeEmpty)
 	a.So(err, should.BeNil)

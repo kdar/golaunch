@@ -64,9 +64,10 @@ const InvalidHandle = ^Handle(0)
 //sys   createCompatibleDC(hdc Handle) (h Handle, err error) = gdi32.CreateCompatibleDC
 //sys   createDIBSection(hdc Handle, pbmih uintptr, iUsage uint32, ppvBits *unsafe.Pointer, hSection Handle, dwOffset uint32) (h Handle, err error) = gdi32.CreateDIBSection
 //sys   selectObject(hdc Handle, hgdiobj Handle) (h Handle, err error) = gdi32.SelectObject
-//sys   drawIconEx(hdc Handle, xLeft int32, yTop int32, hIcon Handle, cxWidth int32, cyWidth int32, istepIfAniCur uint32, hbrFlickerFreeDraw Handle, diFlags uint32) (b int, err error) = user32.DrawIconEx
+//sys   drawIconEx(hdc Handle, xLeft int32, yTop int32, hIcon Handle, cxWidth int32, cyWidth int32, istepIfAniCur uint32, hbrFlickerFreeDraw Handle, diFlags uint32) (b bool, err error) [failretval==false] = user32.DrawIconEx
 //sys   extractIconEx(lpszFile *uint16, nIconIndex int, phiconLarge *Handle, phiconSmall *Handle, nIcons int) (i int, err error) = shell32.ExtractIconExW
 ////sys   shGetImageList(iImageList int, riid *GUID, ppv **uintptr) (r uintptr, err error) [failretval!=0] = shell32.SHGetImageList
 ////sys   imageList_GetIcon(himl uintptr, i int, flags uint) (h Handle, err error) = comctl32.ImageList_GetIcon
 ////sys   extractAssociatedIcon(hInst Handle, lpIconPath *uint16, lpiIcon *uint16) (h Handle, err error) = shell32.ExtractAssociatedIconW
 //sys   destroyIcon(hIcon Handle) (b bool, err error) [failretval==false] = user32.DestroyIcon
+//sys   getObject(hgdiobj Handle, cbBuffer int, lpvObject uintptr) (i int, err error) = gdi32.GetObjectW

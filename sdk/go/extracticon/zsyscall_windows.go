@@ -32,6 +32,7 @@ var (
 	procDrawIconEx               = moduser32.NewProc("DrawIconEx")
 	procExtractIconExW           = modshell32.NewProc("ExtractIconExW")
 	procDestroyIcon              = moduser32.NewProc("DestroyIcon")
+	procGetObjectW               = modgdi32.NewProc("GetObjectW")
 )
 
 func shGetFileInfo(pszPath *uint16, dwFileAttributes uint32, psfi uintptr, cbFileInfo uint32, uFlags uint32) (i uintptr, err error) {
@@ -234,10 +235,10 @@ func selectObject(hdc Handle, hgdiobj Handle) (h Handle, err error) {
 	return
 }
 
-func drawIconEx(hdc Handle, xLeft int32, yTop int32, hIcon Handle, cxWidth int32, cyWidth int32, istepIfAniCur uint32, hbrFlickerFreeDraw Handle, diFlags uint32) (b int, err error) {
+func drawIconEx(hdc Handle, xLeft int32, yTop int32, hIcon Handle, cxWidth int32, cyWidth int32, istepIfAniCur uint32, hbrFlickerFreeDraw Handle, diFlags uint32) (b bool, err error) {
 	r0, _, e1 := syscall.Syscall9(procDrawIconEx.Addr(), 9, uintptr(hdc), uintptr(xLeft), uintptr(yTop), uintptr(hIcon), uintptr(cxWidth), uintptr(cyWidth), uintptr(istepIfAniCur), uintptr(hbrFlickerFreeDraw), uintptr(diFlags))
-	b = int(r0)
-	if b == 0 {
+	b = r0 != 0
+	if b == false {
 		if e1 != 0 {
 			err = error(e1)
 		} else {
@@ -264,6 +265,19 @@ func destroyIcon(hIcon Handle) (b bool, err error) {
 	r0, _, e1 := syscall.Syscall(procDestroyIcon.Addr(), 1, uintptr(hIcon), 0, 0)
 	b = r0 != 0
 	if b == false {
+		if e1 != 0 {
+			err = error(e1)
+		} else {
+			err = syscall.EINVAL
+		}
+	}
+	return
+}
+
+func getObject(hgdiobj Handle, cbBuffer int, lpvObject uintptr) (i int, err error) {
+	r0, _, e1 := syscall.Syscall(procGetObjectW.Addr(), 3, uintptr(hgdiobj), uintptr(cbBuffer), uintptr(lpvObject))
+	i = int(r0)
+	if i == 0 {
 		if e1 != 0 {
 			err = error(e1)
 		} else {

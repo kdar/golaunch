@@ -19,7 +19,7 @@ func TestFrom(t *testing.T) {
 
 	extract := New()
 
-	image, err := extract.From("testdata/smush.exe")
+	image, err := extract.From("testdata/uTorrent.exe")
 	if err != nil || image == nil {
 		t.Fatalf("%s: %v", "", merry.Details(err))
 	}
@@ -28,6 +28,19 @@ func TestFrom(t *testing.T) {
 	defer fp.Close()
 
 	err = png.Encode(fp, image)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	image, err = extract.From("testdata/smush.exe")
+	if err != nil || image == nil {
+		t.Fatalf("%s: %v", "", merry.Details(err))
+	}
+
+	fp2, _ := os.Create("output2.png")
+	defer fp2.Close()
+
+	err = png.Encode(fp2, image)
 	if err != nil {
 		fmt.Println(err)
 	}

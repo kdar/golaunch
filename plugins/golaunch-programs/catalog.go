@@ -291,7 +291,7 @@ func (c *Catalog) used(qr sdk.QueryResult) error {
 }
 
 func (c *Catalog) addPath(path string) error {
-	image, _ := c.system.GetAppIcon(path)
+	image, _ := c.system.EmbeddedAppIcon(path)
 	program := sdk.Program{
 		Path:  path,
 		Image: image,

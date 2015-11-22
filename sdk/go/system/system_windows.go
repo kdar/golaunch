@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"golaunch/sdk/go/extracticon"
+	"image"
 	"image/png"
 	"log"
 	"os"
@@ -41,17 +42,26 @@ func (s *System) Close() {
 	ole.CoUninitialize()
 }
 
-func (s *System) GetAppIcon(path string) (string, error) {
+func (s *System) AppIcon(path string) (image.Image, error) {
 	if filepath.Ext(path) == ".lnk" {
-		path = s.GetRealImagePath(path)
+		path = s.ResolveLink(path)
 	}
 
 	icon, err := s.extract.From(path)
 	if err != nil {
 		icon, err = s.extract.FromExt(filepath.Ext(path))
 		if err != nil {
-			return "", err
+			return nil, err
 		}
+	}
+
+	return icon, nil
+}
+
+func (s *System) EmbeddedAppIcon(path string) (string, error) {
+	icon, err := s.AppIcon(path)
+	if err != nil {
+		return "", err
 	}
 
 	buf := bytes.NewBuffer([]byte("data:image/png;base64,"))
@@ -64,7 +74,7 @@ func (s *System) GetAppIcon(path string) (string, error) {
 	return buf.String(), nil
 }
 
-func (s *System) GetRealImagePath(path string) string {
+func (s *System) ResolveLink(path string) string {
 	cs, err := oleutil.CallMethod(s.wshell, "CreateShortcut", path)
 	if err != nil {
 		if v, ok := err.(*ole.OleError); ok {
@@ -73,14 +83,16 @@ func (s *System) GetRealImagePath(path string) string {
 		return path
 	}
 
+	idispatch := cs.ToIDispatch()
+
 	// FIXME: this gives us the icon id too, but we currently don't use it in
 	// the extracticon api.
-	iconLocation := strings.Split(oleutil.MustGetProperty(cs.ToIDispatch(), "IconLocation").ToString(), ",")
+	iconLocation := strings.Split(oleutil.MustGetProperty(idispatch, "IconLocation").ToString(), ",")
 	if len(iconLocation) > 0 && strings.Contains(iconLocation[0], ".") {
 		return iconLocation[0]
 	}
 
-	return oleutil.MustGetProperty(cs.ToIDispatch(), "TargetPath").ToString()
+	return oleutil.MustGetProperty(idispatch, "TargetPath").ToString()
 }
 
 func (s *System) RunProgram(path string) error {

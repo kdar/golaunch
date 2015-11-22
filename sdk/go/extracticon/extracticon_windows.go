@@ -129,6 +129,7 @@ func (e *Extract) From(path string) (image.Image, error) {
 
 func (e *Extract) handleToImage(handle Handle) (image.Image, error) {
 	var iconInfo win.ICONINFO
+
 	_, err := getIconInfo(handle, uintptr(unsafe.Pointer(&iconInfo)))
 	if err != nil {
 		return nil, merry.Wrap(err)
@@ -177,10 +178,12 @@ func (e *Extract) handleToImage(handle Handle) (image.Image, error) {
 		return nil, merry.Wrap(err)
 	}
 
-	if _, err := drawIconEx(hdc, 0, 0, Handle(handle), w, h, 0, 0, win.DI_NORMAL); err != nil {
+	success, err := drawIconEx(hdc, 0, 0, Handle(handle), w, h, 0, 0, win.DI_NORMAL)
+	if err != nil {
 		return nil, merry.Wrap(err)
 	}
 
+	hasAlpha := false
 	rgba := image.NewRGBA(image.Rectangle{
 		Min: image.Point{
 			X: 0,
@@ -193,6 +196,10 @@ func (e *Extract) handleToImage(handle Handle) (image.Image, error) {
 	})
 	for y := int32(0); y < h; y++ {
 		for x := int32(0); x < w; x++ {
+			if pixels[((y*w+x)*4)+3] > 0 {
+				hasAlpha = true
+			}
+
 			rgba.SetRGBA(int(x), int(y), color.RGBA{
 				A: uint8(pixels[((y*w+x)*4)+3]),
 				R: uint8(pixels[((y*w+x)*4)+2]),
@@ -202,16 +209,25 @@ func (e *Extract) handleToImage(handle Handle) (image.Image, error) {
 		}
 	}
 
-	if _, err := drawIconEx(hdc, 0, 0, Handle(handle), w, h, 0, 0, win.DI_MASK); err != nil {
+	if hasAlpha {
+		return rgba, nil
+	}
+
+	success, err = drawIconEx(hdc, 0, 0, Handle(handle), w, h, 0, 0, win.DI_MASK)
+	if err != nil {
 		return nil, merry.Wrap(err)
 	}
 
-	for y := int32(0); y < h; y++ {
-		for x := int32(0); x < w; x++ {
-			if pixels[((y*w+x)*4)+3] == 0 && pixels[((y*w+x)*4)+2] == 0 && pixels[((y*w+x)*4)+1] == 0 && pixels[((y*w+x)*4)+0] == 0 {
+	//fmt.Println(reflect.DeepEqual(pixels, pixelscopy))
+
+	if success {
+		for y := int32(0); y < h; y++ {
+			for x := int32(0); x < w; x++ {
 				tmp := rgba.RGBAAt(int(x), int(y))
-				tmp.A = 0xFF
-				rgba.SetRGBA(int(x), int(y), tmp)
+				if (pixels[((y*w+x)*4)+2] | pixels[((y*w+x)*4)+1] | pixels[((y*w+x)*4)+0]) == 0 {
+					tmp.A = 0xFF
+					rgba.SetRGBA(int(x), int(y), tmp)
+				}
 			}
 		}
 	}

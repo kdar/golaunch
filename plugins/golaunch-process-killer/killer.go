@@ -56,7 +56,7 @@ func main() {
 					shortname := filepath.Base(name[:len(name)-len(filepath.Ext(name))])
 					mr := fuzzy.Match(processQuery, shortname)
 					if mr.Success || len(processQuery) == 0 {
-						image, _ := system.GetAppIcon(name)
+						image, _ := system.EmbeddedAppIcon(name)
 						results = append(results, sdk.QueryResult{
 							Program: sdk.Program{
 								Image: image,
