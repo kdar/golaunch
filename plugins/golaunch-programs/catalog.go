@@ -176,6 +176,10 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 		Label:   "Open containing folder",
 		Enabled: true,
 		Icon:    filepath.Join(pwd, "images", "open-containing-folder.png"),
+	}, {
+		Label:   "Run as admin",
+		Enabled: true,
+		Icon:    filepath.Join(pwd, "images", "shield.png"),
 	}}
 
 	if c.cfg.CacheInMemory {

@@ -173,7 +173,7 @@ var PluginManager = function() {
       directPluginRequest({
         "method": "action",
         "params": data
-      }, model.plugins[data.id]);
+      }, model.plugins[data.queryResult.id]);
     });
   };
 

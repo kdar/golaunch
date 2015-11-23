@@ -45,7 +45,7 @@ var Plugin = function() {
         });
       }
     } else if (data.method == "action") {
-      clipboard.writeText(data.params.data);
+      clipboard.writeText(data.params.queryResult.data);
     }
   });
 };

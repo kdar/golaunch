@@ -156,12 +156,12 @@ func main() {
 					// a.CreateResponse(v.ID, fresults)
 					// fmt.Fprintf(os.Stderr, "flatbuffers encoding: %v\n", time.Now().Sub(start))
 				case "action":
-					var param sdk.QueryResult
+					var param sdk.Action
 					json.Unmarshal(v.Params, &param)
 
-					catalog.used(param)
+					catalog.used(param.QueryResult)
 
-					if err := system.RunProgram(param.Path, "", "", ""); err != nil {
+					if err := system.RunProgram(param.QueryResult.Path, "", "", ""); err != nil {
 						log.Println(err)
 					}
 				}

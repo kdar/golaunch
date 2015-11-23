@@ -104,9 +104,9 @@ var App = {
     ctrl.selected = m.prop(0);
 
     ctrl.doAction = function() {
-      pluginManager.pluginAction(
-        AppVm.queryResults()[ctrl.selected()]
-      );
+      pluginManager.pluginAction({
+        queryResult: AppVm.queryResults()[ctrl.selected()]
+      });
 
       // FIXME: should let plugins determine if the window hides.
       remote.getCurrentWindow().hide();
@@ -189,7 +189,6 @@ var App = {
             i++;
 
           var cm = AppVm.queryResults()[i].contextmenu;
-          console.log(cm);
           if (cm) {
             contextmenu.clear();
             for (var x = 0; x < cm.length; x++) {

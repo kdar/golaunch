@@ -63,7 +63,7 @@ var Plugin = function() {
         });
       }
     } else if (data.method == "action") {
-      if (data.params.data == "restart") {
+      if (data.params.queryResult.data == "restart") {
         const args = process.argv.slice(1);
         //const out = fs.openSync('./out.log', 'a');
         //const err = fs.openSync('./out.log', 'a');
@@ -73,7 +73,7 @@ var Plugin = function() {
         });
         child.unref();
         app.quit();
-      } else if (data.params.data == "quit" || data.params.data == "exit") {
+      } else if (data.params.queryResult.data == "quit" || data.params.queryResult.data == "exit") {
         app.quit();
       }
     }

@@ -30,6 +30,11 @@ type ContextMenuItem struct {
 	SubMenu []ContextMenuItem `json:"submenu,omitempty"`
 }
 
+type Action struct {
+	Name        string
+	QueryResult QueryResult `json:"queryResult"`
+}
+
 type QueryResult struct {
 	Program
 	Title    string `json:"title"`

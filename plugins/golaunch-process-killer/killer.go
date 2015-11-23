@@ -96,10 +96,10 @@ func main() {
 			}
 
 		case "action":
-			var param sdk.QueryResult
+			var param sdk.Action
 			json.Unmarshal(v.Params, &param)
 
-			for _, pid := range cast.ToIntSlice(param.Data) {
+			for _, pid := range cast.ToIntSlice(param.QueryResult.Data) {
 				p, _ := os.FindProcess(pid)
 				p.Kill()
 			}

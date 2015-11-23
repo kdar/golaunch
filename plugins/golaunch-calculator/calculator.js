@@ -33,7 +33,7 @@ var Plugin = function() {
         });
       } catch (e) {}
     } else if (data.method == "action") {
-      clipboard.writeText(data.params.title);
+      clipboard.writeText(data.params.queryResult.title);
     }
   });
 };
