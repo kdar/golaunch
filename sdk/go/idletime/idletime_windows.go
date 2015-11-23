@@ -38,8 +38,3 @@ func Get() (time.Duration, error) {
 
 	return time.Duration(currentIdleTime) * time.Millisecond, nil
 }
-
-//go:generate go run $GOROOT/src/syscall/mksyscall_windows.go -output zidletime_windows.go idletime_windows.go
-
-//sys   getLastInputInfo(plii uintptr) (b bool, err error) [failretval==false] = user32.GetLastInputInfo
-//sys   getTickCount() (i uint32) [failretval==false] = kernel32.GetTickCount
