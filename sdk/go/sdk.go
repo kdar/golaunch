@@ -31,7 +31,8 @@ type ContextMenuItem struct {
 }
 
 type Action struct {
-	Name        string
+	Type        string      `json:"type"`
+	Name        string      `json:"name"`
 	QueryResult QueryResult `json:"queryResult"`
 }
 

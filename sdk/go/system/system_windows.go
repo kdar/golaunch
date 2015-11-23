@@ -146,3 +146,7 @@ func (s *System) RunProgram(path string, args string, dir string, user string) e
 	// cmd := exec.Command(path)
 	// return cmd.Start()
 }
+
+func (s *System) OpenFolder(path string) error {
+	return ShellExecute("open", path, "", "")
+}

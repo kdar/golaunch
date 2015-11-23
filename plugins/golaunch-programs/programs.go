@@ -8,9 +8,11 @@ import (
 	"golaunch/sdk/go/system"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
@@ -159,10 +161,19 @@ func main() {
 					var param sdk.Action
 					json.Unmarshal(v.Params, &param)
 
-					catalog.used(param.QueryResult)
-
-					if err := system.RunProgram(param.QueryResult.Path, "", "", ""); err != nil {
-						log.Println(err)
+					if param.Type == "contextmenu" {
+						switch param.Name {
+						case "Copy path":
+							clipboard.WriteAll(param.QueryResult.Path)
+						case "Open containing folder":
+							system.OpenFolder(filepath.Dir(param.QueryResult.Path))
+						case "Run as admin":
+						}
+					} else {
+						catalog.used(param.QueryResult)
+						if err := system.RunProgram(param.QueryResult.Path, "", "", ""); err != nil {
+							log.Println(err)
+						}
 					}
 				}
 			}

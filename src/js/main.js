@@ -105,6 +105,7 @@ var App = {
 
     ctrl.doAction = function() {
       pluginManager.pluginAction({
+        type: "execute",
         queryResult: AppVm.queryResults()[ctrl.selected()]
       });
 
@@ -192,7 +193,15 @@ var App = {
           if (cm) {
             contextmenu.clear();
             for (var x = 0; x < cm.length; x++) {
-              contextmenu.append(new MenuItem(cm[x]));
+              contextmenu.append(new MenuItem(Object.assign({}, cm[x], {
+                click: function(menuItem, browserWindow) {
+                  pluginManager.pluginAction({
+                    type: "contextmenu",
+                    name: menuItem.label,
+                    queryResult: AppVm.queryResults()[ctrl.selected()]
+                  });
+                }
+              })));
             }
             contextmenu.popup(remote.getCurrentWindow());
           }
