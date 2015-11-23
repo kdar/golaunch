@@ -14,9 +14,9 @@ build:
 	go build -o ./plugins/golaunch-programs/golaunch-programs.exe ./plugins/golaunch-programs
 	go build -o ./plugins/golaunch-process-killer/golaunch-process-killer.exe ./plugins/golaunch-process-killer
 
-package:
+package:build
 	./node_modules/.bin/electron-packager . GoLaunch \
-	  --overwrite --prune --platform=win32 --arch=x64 --version=0.35.0 --out=dist \
+	  --overwrite --prune --platform=win32 --arch=x64 --version=0.35.1 --out=dist \
 		--ignore=node_modules/\.bin \
 		--ignore="^\\." \
 		--ignore="media" \

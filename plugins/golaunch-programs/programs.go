@@ -161,7 +161,7 @@ func main() {
 
 					catalog.used(param)
 
-					if err := system.RunProgram(param.Path); err != nil {
+					if err := system.RunProgram(param.Path, "", "", ""); err != nil {
 						log.Println(err)
 					}
 				}

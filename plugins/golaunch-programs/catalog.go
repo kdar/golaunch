@@ -16,6 +16,7 @@ import (
 
 	"github.com/MichaelTJones/walk"
 	"github.com/boltdb/bolt"
+	"github.com/kardianos/osext"
 	"gopkg.in/fsnotify.v1"
 )
 
@@ -165,6 +166,18 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 
 	start := time.Now()
 
+	pwd, _ := osext.ExecutableFolder()
+
+	contextmenu := []sdk.ContextMenuItem{{
+		Label:   "Copy path",
+		Enabled: true,
+		Icon:    filepath.Join(pwd, "images", "copy.png"),
+	}, {
+		Label:   "Open containing folder",
+		Enabled: true,
+		Icon:    filepath.Join(pwd, "images", "open-containing-folder.png"),
+	}}
+
 	if c.cfg.CacheInMemory {
 		for k, v := range c.cache {
 			name := filepath.Base(k[:len(k)-len(filepath.Ext(k))])
@@ -172,17 +185,19 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 			if mr.Success {
 				lowName := strings.ToLower(name)
 				results = append(results, sdk.QueryResult{
-					Program: sdk.Program{
-						Path:  v.Path,
-						Image: v.Image,
-						Usage: v.Usage,
-					},
+					Program:  v,
 					ID:       c.metadata.ID,
 					Title:    name,
 					Subtitle: v.Path,
 					Query:    query,
 					LowName:  lowName,
 					Score:    c.calcScore(lowName, v.Usage, mr.Score),
+					ContextMenu: append([]sdk.ContextMenuItem{{
+						Label:   name,
+						Enabled: false,
+					}, {
+						Type: "separator",
+					}}, contextmenu...),
 				})
 			}
 		}
@@ -205,17 +220,19 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 
 					lowName := strings.ToLower(name)
 					results = append(results, sdk.QueryResult{
-						Program: sdk.Program{
-							Path:  program.Path,
-							Image: program.Image,
-							Usage: program.Usage,
-						},
+						Program:  program,
 						ID:       c.metadata.ID,
 						Title:    name,
 						Subtitle: program.Path,
 						Query:    query,
 						LowName:  lowName,
 						Score:    c.calcScore(lowName, program.Usage, mr.Score),
+						ContextMenu: append([]sdk.ContextMenuItem{{
+							Label:   name,
+							Enabled: false,
+						}, {
+							Type: "separator",
+						}}, contextmenu...),
 					})
 				}
 			}
@@ -232,17 +249,19 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 					name := filepath.Base(v.Path[:len(v.Path)-len(filepath.Ext(v.Path))])
 					copy(results[1:i+1], results[0:i])
 					results[0] = sdk.QueryResult{
-						Program: sdk.Program{
-							Path:  v.Path,
-							Image: v.Image,
-							Usage: v.Usage,
-						},
+						Program:  v,
 						ID:       c.metadata.ID,
 						Title:    name,
 						Subtitle: v.Path,
 						Query:    query,
 						LowName:  strings.ToLower(name),
 						Score:    -1,
+						ContextMenu: append([]sdk.ContextMenuItem{{
+							Label:   name,
+							Enabled: false,
+						}, {
+							Type: "separator",
+						}}, contextmenu...),
 					}
 				}
 			}

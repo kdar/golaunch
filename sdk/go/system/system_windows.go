@@ -8,13 +8,11 @@ import (
 	"image/png"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/mattn/go-ole"
 	"github.com/mattn/go-ole/oleutil"
-	"github.com/mattn/go-shellwords"
 )
 
 // Possibly get filename description from exe
@@ -95,29 +93,56 @@ func (s *System) ResolveLink(path string) string {
 	return oleutil.MustGetProperty(idispatch, "TargetPath").ToString()
 }
 
-func (s *System) RunProgram(path string) error {
+func (s *System) RunProgram(path string, args string, dir string, user string) error {
 	if filepath.Ext(path) == ".lnk" {
-		cs := oleutil.MustCallMethod(s.wshell, "CreateShortcut", path).ToIDispatch()
-		path = oleutil.MustGetProperty(cs, "TargetPath").ToString()
+		lcs := oleutil.MustCallMethod(s.wshell, "CreateShortcut", path).ToIDispatch()
+		lpath := oleutil.MustGetProperty(lcs, "TargetPath").ToString()
 		// can possible call the method Count and Item to retrieve individual arg items
 		// https://msdn.microsoft.com/en-us/library/ss1ysb2a(v=vs.84).aspx
-		args := oleutil.MustGetProperty(cs, "Arguments").ToString()
-		wd := oleutil.MustGetProperty(cs, "WorkingDirectory").ToString()
-		cmd := exec.Command(path)
+		largs := oleutil.MustGetProperty(lcs, "Arguments").ToString()
+		lwd := oleutil.MustGetProperty(lcs, "WorkingDirectory").ToString()
 
-		wdstat, err := os.Stat(wd)
-		if !os.IsNotExist(err) && wdstat.IsDir() {
-			cmd.Dir = wd
+		path = lpath
+
+		lwdstat, err := os.Stat(lwd)
+		if dir == "" && !os.IsNotExist(err) && lwdstat.IsDir() {
+			dir = lwd
 		}
 
-		if len(args) > 0 {
-			args, _ := shellwords.Parse("cmd " + args)
-			cmd.Args = args
+		if args == "" && len(largs) > 0 {
+			args = largs
 		}
-
-		return cmd.Start()
 	}
 
-	cmd := exec.Command(path)
-	return cmd.Start()
+	action := ""
+	if user == "administrator" {
+		action = "runas"
+	}
+
+	return ShellExecute(action, path, args, dir)
+
+	// if filepath.Ext(path) == ".lnk" {
+	// 	cs := oleutil.MustCallMethod(s.wshell, "CreateShortcut", path).ToIDispatch()
+	// 	path = oleutil.MustGetProperty(cs, "TargetPath").ToString()
+	// 	// can possible call the method Count and Item to retrieve individual arg items
+	// 	// https://msdn.microsoft.com/en-us/library/ss1ysb2a(v=vs.84).aspx
+	// 	args := oleutil.MustGetProperty(cs, "Arguments").ToString()
+	// 	wd := oleutil.MustGetProperty(cs, "WorkingDirectory").ToString()
+	// 	cmd := exec.Command(path)
+	//
+	// 	wdstat, err := os.Stat(wd)
+	// 	if !os.IsNotExist(err) && wdstat.IsDir() {
+	// 		cmd.Dir = wd
+	// 	}
+	//
+	// 	if len(args) > 0 {
+	// 		args, _ := shellwords.Parse("cmd " + args)
+	// 		cmd.Args = args
+	// 	}
+	//
+	// 	return cmd.Start()
+	// }
+	//
+	// cmd := exec.Command(path)
+	// return cmd.Start()
 }

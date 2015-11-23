@@ -22,15 +22,24 @@ type Program struct {
 	Usage int    `json:"usage"`
 }
 
+type ContextMenuItem struct {
+	Type    string            `json:"type,omitempty"`
+	Label   string            `json:"label"`
+	Enabled bool              `json:"enabled"`
+	Icon    string            `json:"icon,omitempty"`
+	SubMenu []ContextMenuItem `json:"submenu,omitempty"`
+}
+
 type QueryResult struct {
 	Program
 	Title    string `json:"title"`
 	Subtitle string `json:"subtitle"`
 	Query    string `json:"query"`
 	// ID of plugin returning this query results
-	ID      string `json:"id"`
-	Score   int    `json:"score"`
-	LowName string `json:"-"`
+	ID          string            `json:"id"`
+	Score       int               `json:"score"`
+	LowName     string            `json:"-"`
+	ContextMenu []ContextMenuItem `json:"contextmenu"`
 	// extra data for plugins
 	Data interface{} `json:"data"`
 }

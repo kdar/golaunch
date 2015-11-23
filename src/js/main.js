@@ -3,9 +3,16 @@ var remote = electron.remote;
 var m = require('mithril');
 var mousetrap = require('mousetrap');
 
+var Menu = remote.require('menu');
+var MenuItem = remote.require('menu-item');
 var baseSize = remote.getCurrentWindow().getSize();
 var pluginManager = remote.getGlobal("pluginManager");
 var themeManager = remote.getGlobal("themeManager");
+
+var contextmenu = new Menu();
+contextmenu.append(new MenuItem({ label: 'MenuItem1', sublabel: "caca", click: function() { console.log('item 1 clicked'); } }));
+contextmenu.append(new MenuItem({ type: 'separator' }));
+contextmenu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
 
 var AppVm = (function() {
   var vm = {
@@ -121,6 +128,7 @@ var App = {
     ctrl.onQueryInput = function() {
       if (ctrl.searchText.value != "") {
         debouncedQuery(ctrl.searchText.value);
+        ctrl.selected(0);
       } else {
         AppVm.queryResults([]);
         ctrl.selected(0);
@@ -163,6 +171,33 @@ var App = {
             e.target.scrollLeft = 0;
           }
         }
+
+        el.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+
+          var child = e.target;
+          while (child != null && child.tagName != "LI") {
+            child = child.parentNode;
+          }
+
+          if (!child) {
+            return;
+          }
+
+          var i = 0;
+          while ((child = child.previousSibling) != null)
+            i++;
+
+          var cm = AppVm.queryResults()[i].contextmenu;
+          console.log(cm);
+          if (cm) {
+            contextmenu.clear();
+            for (var x = 0; x < cm.length; x++) {
+              contextmenu.append(new MenuItem(cm[x]));
+            }
+            contextmenu.popup(remote.getCurrentWindow());
+          }
+        }, false);
       }
     };
 
