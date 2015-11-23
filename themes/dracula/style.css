@@ -44,6 +44,8 @@ body {
 }
 
 .query-results ul li {
+  position: relative;
+  overflow: hidden;
   margin: 0;
   padding: 0;
   padding: 5px 5px 5px 5px;
@@ -93,4 +95,19 @@ body {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
   background-color: #FF7BCA;
+}
+
+.ink {
+	display: block; position: absolute;
+	background: #6272a4;
+	border-radius: 100%;
+	transform: scale(0);
+}
+
+.ink.animate {
+  animation: ripple 0.65s linear;
+}
+
+@keyframes ripple {
+	100% {opacity: 0; transform: scale(2.5);}
 }

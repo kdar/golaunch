@@ -2,6 +2,7 @@ var electron = require('electron');
 var remote = electron.remote;
 var m = require('mithril');
 var mousetrap = require('mousetrap');
+var ripple = require('./js/ripple');
 
 var Menu = remote.require('menu');
 var MenuItem = remote.require('menu-item');
@@ -184,6 +185,8 @@ var App = {
           if (!child) {
             return;
           }
+
+          ripple(child, e.pageX, e.pageY);
 
           var i = 0;
           while ((child = child.previousSibling) != null)
