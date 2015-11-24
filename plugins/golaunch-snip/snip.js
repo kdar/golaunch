@@ -14,14 +14,14 @@ var Plugin = function() {
     if (data.method == "init") {
       self.metadata = data.params;
     } else if (data.method == "query") {
-      if (data.params[0].startsWith("snip")) {
+      if (data.params.startsWith("snip")) {
         self.emit('response', {
           'result': [{
             image: self.metadata._icon,
             title: "Screen Snipping",
             subtitle: "Snip screen to clipboard",
             score: -1,
-            query: data.params[0],
+            query: data.params,
             id: self.metadata.id
           }]
         });

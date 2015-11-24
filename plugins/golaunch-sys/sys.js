@@ -43,14 +43,14 @@ var Plugin = function() {
     } else if (data.method == "query") {
       var results = [];
       for (var key in commands) {
-        var match = fuzzy.match(data.params[0], key);
+        var match = fuzzy.match(data.params, key);
         if (match.success) {
           results.push({
             image: commands[key].image,
             title: commands[key].title,
             subtitle: commands[key].subtitle,
             score: match.score,
-            query: data.params[0],
+            query: data.params,
             id: self.metadata.id,
             data: key
           });

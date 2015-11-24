@@ -12,7 +12,7 @@ var Plugin = function() {
     if (data.method == "init") {
       self.metadata = data.params;
     } else if (data.method == "query") {
-      if (data.params[0].startsWith("ipaddress")) {
+      if (data.params.startsWith("ipaddress")) {
         extip(function (err, eip) {
           var results = [];
 
@@ -22,7 +22,7 @@ var Plugin = function() {
               title: "External IP: " + eip,
               subtitle: "Copy to clipboard",
               score: -1,
-              query: data.params[0],
+              query: data.params,
               id: self.metadata.id,
               data: eip
             });
@@ -34,7 +34,7 @@ var Plugin = function() {
             title: "Local IP: " + localip,
             subtitle: "Copy to clipboard",
             score: -1,
-            query: data.params[0],
+            query: data.params,
             id: self.metadata.id,
             data: localip
           });

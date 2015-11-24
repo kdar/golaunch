@@ -10,7 +10,7 @@ var Plugin = function() {
       self.metadata = data.params;
     } else if (data.method == "query") {
       try {
-        var answer = math.eval(data.params[0]);
+        var answer = math.eval(data.params);
         if (typeof(answer) == "function") {
           return;
         }
@@ -27,7 +27,7 @@ var Plugin = function() {
             title: "" + answer,
             subtitle: "Copy this answer to clipboard",
             score: -1,
-            query: data.params[0],
+            query: data.params,
             id: self.metadata.id
           }]
         });

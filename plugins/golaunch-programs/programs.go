@@ -130,10 +130,10 @@ func main() {
 				case "init":
 					json.Unmarshal(v.Params, &metadata)
 				case "query":
-					var params []string
-					json.Unmarshal(v.Params, &params)
+					var query string
+					json.Unmarshal(v.Params, &query)
 
-					results := catalog.Query(params[0])
+					results := catalog.Query(query)
 					if results != nil && len(results) > 0 {
 						msg := sdk.Response{
 							Result: results,

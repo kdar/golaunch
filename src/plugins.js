@@ -162,7 +162,7 @@ var PluginManager = function() {
       process.nextTick(function () {
         pluginRequest({
           "method": "query",
-          "params": [query]
+          "params": query
         });
       });
     }

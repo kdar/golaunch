@@ -38,11 +38,11 @@ func main() {
 		case "init":
 			json.Unmarshal(v.Params, &metadata)
 		case "query":
-			var params []string
-			json.Unmarshal(v.Params, &params)
+			var query string
+			json.Unmarshal(v.Params, &query)
 
-			if strings.HasPrefix(params[0], "kill ") {
-				processQuery := params[0][5:]
+			if strings.HasPrefix(query, "kill ") {
+				processQuery := query[5:]
 				var results []sdk.QueryResult
 
 				p, herr, _ := process.OpenAll()
@@ -63,7 +63,7 @@ func main() {
 							},
 							Title:    fmt.Sprintf("%s - %d", shortname, v.Pid()),
 							Subtitle: name,
-							Query:    params[0],
+							Query:    query,
 							ID:       metadata.ID,
 							Score:    -1,
 							Data:     []uint{v.Pid()},
@@ -80,7 +80,7 @@ func main() {
 							},
 							Title:    "Kill all \"" + processQuery + "\" processes",
 							Subtitle: "Make sure it matches what you want!",
-							Query:    params[0],
+							Query:    query,
 							ID:       metadata.ID,
 							Score:    -1,
 							Data:     allPids,
