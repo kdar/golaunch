@@ -23,7 +23,7 @@ var Plugin = function() {
         //console.dir(answer);
         self.emit('response', {
           'result': [{
-            image: self.metadata._icon,
+            icon: self.metadata._icon,
             title: "" + answer,
             subtitle: "Copy this answer to clipboard",
             score: -1,

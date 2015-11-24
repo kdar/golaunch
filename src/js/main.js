@@ -246,7 +246,7 @@ var App = {
             cls = "selected";
           }
           return <li class={cls} onclick={function(e) { ctrl.onQueryItemClick(e, index); }} ondblclick={function(e) { ctrl.onQueryItemDblClick(e, index); }}>
-            <img src={item.image}></img>
+            <img src={item.icon}></img>
             <h1>{item.title}</h1>
             <h2>{item.subtitle}</h2>
           </li>;

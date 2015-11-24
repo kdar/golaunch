@@ -17,7 +17,7 @@ var Plugin = function() {
       if (data.params.startsWith("snip")) {
         self.emit('response', {
           'result': [{
-            image: self.metadata._icon,
+            icon: self.metadata._icon,
             title: "Screen Snipping",
             subtitle: "Snip screen to clipboard",
             score: -1,

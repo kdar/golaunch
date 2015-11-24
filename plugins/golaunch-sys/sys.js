@@ -25,14 +25,14 @@ var Plugin = function() {
   };
 
   sdk.imageFileToEmbed(path.join(__dirname, "images", "exit.png")).then(function(img) {
-    commands["quit"].image = img;
-    commands["exit"].image = img;
+    commands["quit"].icon = img;
+    commands["exit"].icon = img;
   }, function(err) {
     console.error(err);
   });
 
   sdk.imageFileToEmbed(path.join(__dirname, "images", "restart.png")).then(function(img) {
-    commands["restart"].image = img;
+    commands["restart"].icon = img;
   }, function(err) {
     console.error(err);
   });
@@ -46,7 +46,7 @@ var Plugin = function() {
         var match = fuzzy.match(data.params, key);
         if (match.success) {
           results.push({
-            image: commands[key].image,
+            icon: commands[key].icon,
             title: commands[key].title,
             subtitle: commands[key].subtitle,
             score: match.score,

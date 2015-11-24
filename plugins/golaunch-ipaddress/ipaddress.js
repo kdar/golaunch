@@ -18,7 +18,7 @@ var Plugin = function() {
 
           if (!err) {
             results.push({
-              image: self.metadata._icon,
+              icon: self.metadata._icon,
               title: "External IP: " + eip,
               subtitle: "Copy to clipboard",
               score: -1,
@@ -30,7 +30,7 @@ var Plugin = function() {
 
           var localip = locip.address();
           results.push({
-            image: self.metadata._icon,
+            icon: self.metadata._icon,
             title: "Local IP: " + localip,
             subtitle: "Copy to clipboard",
             score: -1,

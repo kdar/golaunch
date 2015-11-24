@@ -56,10 +56,10 @@ func main() {
 					shortname := filepath.Base(name[:len(name)-len(filepath.Ext(name))])
 					mr := fuzzy.Match(processQuery, shortname)
 					if mr.Success || len(processQuery) == 0 {
-						image, _ := system.EmbeddedAppIcon(name)
+						icon, _ := system.EmbeddedAppIcon(name)
 						results = append(results, sdk.QueryResult{
 							Program: sdk.Program{
-								Image: image,
+								Icon: icon,
 							},
 							Title:    fmt.Sprintf("%s - %d", shortname, v.Pid()),
 							Subtitle: name,
@@ -76,7 +76,7 @@ func main() {
 					if len(processQuery) != 0 {
 						results = append([]sdk.QueryResult{{
 							Program: sdk.Program{
-								Image: metadata.Icon,
+								Icon: metadata.Icon,
 							},
 							Title:    "Kill all \"" + processQuery + "\" processes",
 							Subtitle: "Make sure it matches what you want!",

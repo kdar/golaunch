@@ -314,10 +314,10 @@ func (c *Catalog) used(qr sdk.QueryResult) error {
 }
 
 func (c *Catalog) addPath(path string) error {
-	image, _ := c.system.EmbeddedAppIcon(path)
+	icon, _ := c.system.EmbeddedAppIcon(path)
 	program := sdk.Program{
 		Path:  path,
-		Image: image,
+		Icon:  icon,
 		Usage: 0,
 	}
 

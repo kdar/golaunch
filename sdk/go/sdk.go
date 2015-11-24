@@ -18,7 +18,7 @@ type Response struct {
 
 type Program struct {
 	Path  string `json:"path"`
-	Image string `json:"image"`
+	Icon  string `json:"icon"`
 	Usage int    `json:"usage"`
 }
 
