@@ -7,6 +7,7 @@ var toml = require('toml');
 var concat = require('concat-stream');
 var events = require('events');
 var domain = require('domain');
+var sdk = require('../sdk/js/sdk');
 
 var PluginManager = function() {
   var self = this;
@@ -76,16 +77,7 @@ var PluginManager = function() {
         var parsed = toml.parse(data);
 
         if (parsed.icon) {
-          var data = fs.readFileSync(path.join(dirPath, parsed.icon));
-
-          var base64data = new Buffer(data).toString('base64');
-          var ext = path.extname(parsed.icon);
-          if (ext) {
-            ext = ext.substr(1);
-          } else {
-            ext = "png";
-          }
-          parsed._icon = "data:image/" + ext + ";base64," + base64data;
+          parsed._icon = imageFileToEmbedSync(path.join(dirPath, parsed.icon);
         }
 
         parsed._appdata = path.join(app.getPath("userData"), parsed.name);
