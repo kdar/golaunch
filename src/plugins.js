@@ -77,7 +77,7 @@ var PluginManager = function() {
         var parsed = toml.parse(data);
 
         if (parsed.icon) {
-          parsed._icon = imageFileToEmbedSync(path.join(dirPath, parsed.icon);
+          parsed._icon = sdk.imageFileToEmbedSync(path.join(dirPath, parsed.icon));
         }
 
         parsed._appdata = path.join(app.getPath("userData"), parsed.name);
