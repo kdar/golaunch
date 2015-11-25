@@ -38,14 +38,15 @@ func (s *Source) containsExt(ext string) bool {
 }
 
 type Config struct {
-	MaxResults     int           `toml:"max_results"`
-	CacheInMemory  bool          `toml:"cache_in_memory"`
-	ScanInterval   string        `toml:"scan_interval"`
-	scanInterval   time.Duration `toml:"-"`
-	ScanOnStartup  bool          `toml:"scan_on_startup"`
-	ScanWhenIdle   bool          `toml:"scan_when_idle"`
-	MaxScansPerRun int           `toml:"max_scans_per_run"`
-	Sources        []Source      `toml:"sources"`
+	MaxResults           int           `toml:"max_results"`
+	CacheInMemory        bool          `toml:"cache_in_memory"`
+	ScanInterval         string        `toml:"scan_interval"`
+	scanInterval         time.Duration `toml:"-"`
+	ScanOnStartup        bool          `toml:"scan_on_startup"`
+	ScanOnStartupIfEmpty bool          `toml:"scan_on_startup_if_empty"`
+	ScanWhenIdle         bool          `toml:"scan_when_idle"`
+	MaxScansPerRun       int           `toml:"max_scans_per_run"`
+	Sources              []Source      `toml:"sources"`
 }
 
 func main() {
@@ -80,6 +81,10 @@ func main() {
 		log.Fatal(err)
 	}
 	defer catalog.Shutdown()
+
+	if cfg.ScanOnStartupIfEmpty && catalog.IsEmpty() {
+		go catalog.Index()
+	}
 
 	if cfg.ScanOnStartup {
 		go catalog.Index()

@@ -380,6 +380,22 @@ func (c *Catalog) watch() {
 	}
 }
 
+func (c *Catalog) IsEmpty() bool {
+	empty := false
+	c.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("programs"))
+		if b == nil {
+			empty = true
+			return nil
+		}
+
+		empty = b.Stats().KeyN == 0
+		return nil
+	})
+
+	return empty
+}
+
 func (c *Catalog) Index() {
 	select {
 	case v := <-c.indexing:
