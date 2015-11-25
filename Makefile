@@ -3,18 +3,22 @@ SHELL=D:/dev/msys64/usr/bin/bash.exe
 VERSION=$(shell node -e "console.log(require('./package.json').version);")
 
 watch:
-	gobble watch app/build
+	go run watch.go
 
-dev:build
+dev:
 	npm start
 
-build:
+buildplugins:
 	@# flatc -g query_result.fbs request.fbs response.fbs
 	@# flatc -s -o ./app/js/flatapi query_result.fbs request.fbs response.fbs
 	go build -o ./plugins/golaunch-programs/golaunch-programs.exe ./plugins/golaunch-programs
 	go build -o ./plugins/golaunch-process-killer/golaunch-process-killer.exe ./plugins/golaunch-process-killer
+	go build -o ./plugins/golaunch-helloworld/golaunch-helloworld.exe ./plugins/golaunch-helloworld
 
-package:build
+buildjs:
+	gobble build -f build
+
+package:buildplugins buildjs
 	./node_modules/.bin/electron-packager . GoLaunch \
 	  --overwrite --prune --platform=win32 --arch=x64 --version=0.35.1 --out=dist \
 		--ignore=node_modules/\.bin \
