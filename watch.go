@@ -112,6 +112,7 @@ func main() {
 			}
 		},
 	})
+
 	w.Add(Target{
 		Dir:   "plugins",
 		Globs: []string{"*.go"},
