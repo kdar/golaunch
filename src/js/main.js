@@ -11,9 +11,6 @@ var pluginManager = remote.getGlobal("pluginManager");
 var themeManager = remote.getGlobal("themeManager");
 
 var contextmenu = new Menu();
-contextmenu.append(new MenuItem({ label: 'MenuItem1', sublabel: "caca", click: function() { console.log('item 1 clicked'); } }));
-contextmenu.append(new MenuItem({ type: 'separator' }));
-contextmenu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
 
 var AppVm = (function() {
   var vm = {
@@ -95,6 +92,10 @@ var App = {
       Mousetrap.bind('down', function(e) {
         updown(1);
         return false;
+      });
+
+      remote.getCurrentWindow().on('focus', function() {
+        ctrl.searchText.setSelectionRange(0, ctrl.searchText.value.length);
       });
     }
   },
