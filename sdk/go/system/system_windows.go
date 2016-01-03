@@ -119,6 +119,10 @@ func (s *System) RunProgram(path string, args string, dir string, user string) e
 		action = "runas"
 	}
 
+	if dir == "" {
+		dir = filepath.Dir(path)
+	}
+
 	return ShellExecute(action, path, args, dir)
 
 	// if filepath.Ext(path) == ".lnk" {
