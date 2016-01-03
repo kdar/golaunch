@@ -17,7 +17,7 @@ import (
 	"github.com/MichaelTJones/walk"
 	"github.com/boltdb/bolt"
 	"github.com/kardianos/osext"
-	"gopkg.in/fsnotify.v1"
+	"github.com/rjeczalik/notify"
 )
 
 type QueryResults []sdk.QueryResult
@@ -51,7 +51,7 @@ type Catalog struct {
 	cfg       *Config
 	db        *bolt.DB
 	historydb *bolt.DB
-	watcher   *fsnotify.Watcher
+	watcher   chan notify.EventInfo
 	system    *system.System
 	metadata  *sdk.Metadata
 
@@ -71,6 +71,7 @@ func NewCatalog(md *sdk.Metadata, cfg *Config, sys *system.System) *Catalog {
 		cache:    make(map[string]sdk.Program),
 		history:  make(map[string]sdk.Program),
 		indexing: make(chan struct{}, 1),
+		watcher:  make(chan notify.EventInfo, 100),
 	}
 }
 
@@ -87,13 +88,8 @@ func (c *Catalog) Init() error {
 	}
 	c.historydb = historydb
 
-	c.watcher, err = fsnotify.NewWatcher()
-	if err != nil {
-		return err
-	}
-
 	for _, source := range c.cfg.Sources {
-		if err := c.watcher.Add(os.ExpandEnv(source.Path)); err != nil {
+		if err := notify.Watch(filepath.Join(os.ExpandEnv(source.Path), "./..."), c.watcher, notify.FileNotifyChangeFileName); err != nil {
 			return err
 		}
 	}
@@ -139,7 +135,7 @@ func (c *Catalog) Shutdown() {
 	}
 
 	if c.watcher != nil {
-		c.watcher.Close()
+		notify.Stop(c.watcher)
 	}
 }
 
@@ -347,35 +343,45 @@ func (c *Catalog) addPath(path string) error {
 	})
 }
 
-func (c *Catalog) watch() {
-	for {
-		select {
-		case event := <-c.watcher.Events:
-			if event.Op&fsnotify.Create == fsnotify.Create {
-				doupdate := false
-				for _, source := range c.cfg.Sources {
-					if filepath.HasPrefix(event.Name, source.Path) {
-						if source.containsExt(filepath.Ext(event.Name)) {
-							doupdate = true
-							break
-						}
-					}
-				}
-				if !doupdate {
-					continue
-				}
+func (c *Catalog) removePath(path string) error {
+	if c.cfg.CacheInMemory {
+		c.cm.Lock()
+		delete(c.cache, path)
+		c.cm.Unlock()
+	}
 
-				if err := c.addPath(event.Name); err != nil {
-					log.Println(err)
+	return c.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("programs"))
+		return b.Delete([]byte(path))
+	})
+}
+
+func (c *Catalog) watch() {
+	for ei := range c.watcher {
+		doupdate := false
+		for _, source := range c.cfg.Sources {
+			if filepath.HasPrefix(ei.Path(), source.Path) {
+				if source.containsExt(filepath.Ext(ei.Path())) {
+					doupdate = true
+					log.Printf("programs: fs event: %v", ei)
+					break
 				}
-			} else if event.Op&fsnotify.Remove == fsnotify.Remove {
-				c.db.Update(func(tx *bolt.Tx) error {
-					b := tx.Bucket([]byte("programs"))
-					return b.Delete([]byte(event.Name))
-				})
 			}
-		case err := <-c.watcher.Errors:
-			log.Println("error:", err)
+		}
+
+		if !doupdate {
+			continue
+		}
+
+		switch ei.Event() {
+		case notify.FileActionAdded:
+			if err := c.addPath(ei.Path()); err != nil {
+				log.Println(err)
+			}
+		case notify.FileActionRemoved:
+			if err := c.removePath(ei.Path()); err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
