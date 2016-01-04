@@ -13,6 +13,7 @@ import (
 
 	"github.com/mattn/go-ole"
 	"github.com/mattn/go-ole/oleutil"
+	"golang.org/x/sys/windows/registry"
 )
 
 // Possibly get filename description from exe
@@ -97,19 +98,30 @@ func (s *System) RunProgram(path string, args string, dir string, user string) e
 	if filepath.Ext(path) == ".lnk" {
 		lcs := oleutil.MustCallMethod(s.wshell, "CreateShortcut", path).ToIDispatch()
 		lpath := oleutil.MustGetProperty(lcs, "TargetPath").ToString()
+
 		// can possible call the method Count and Item to retrieve individual arg items
 		// https://msdn.microsoft.com/en-us/library/ss1ysb2a(v=vs.84).aspx
 		largs := oleutil.MustGetProperty(lcs, "Arguments").ToString()
 		lwd := oleutil.MustGetProperty(lcs, "WorkingDirectory").ToString()
 
 		path = lpath
+		// some lnk files seem to have no TargetPath, such as the windows games,
+		// such as Minesweeper. I just grab its icon path and use that as the
+		// executable,
+		if path == "" {
+			path = oleutil.MustGetProperty(lcs, "IconLocation").ToString()
+			index := strings.LastIndex(path, ",")
+			if index >= 0 {
+				path = path[:index]
+			}
+		}
 
 		lwdstat, err := os.Stat(lwd)
 		if dir == "" && !os.IsNotExist(err) && lwdstat.IsDir() {
 			dir = lwd
 		}
 
-		if args == "" && len(largs) > 0 {
+		if args == "" {
 			args = largs
 		}
 	}
@@ -122,6 +134,10 @@ func (s *System) RunProgram(path string, args string, dir string, user string) e
 	if dir == "" {
 		dir = filepath.Dir(path)
 	}
+
+	// resolve environment variables
+	path, _ = registry.ExpandString(path)
+	dir, _ = registry.ExpandString(dir)
 
 	return ShellExecute(action, path, args, dir)
 
