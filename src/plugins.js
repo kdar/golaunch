@@ -61,7 +61,18 @@ var PluginManager = function() {
     case 'js':
       var _object = plugin._object;
       process.nextTick(function () {
-        _object.emit('request', data);
+        //_object.emit('request', data);
+        switch (data.method) {
+        case "init":
+          _object.init(data.params);
+          break;
+        case "query":
+          _object.query(data.params);
+          break;
+        case "action":
+          _object.action(data.params);
+          break;
+        };
       });
       break;
     }
@@ -79,7 +90,7 @@ var PluginManager = function() {
         if (parsed.enabled === false) {
           return;
         }
-        
+
         if (parsed.icon) {
           parsed._icon = sdk.imageFileToEmbedSync(path.join(dirPath, parsed.icon));
         }
@@ -124,10 +135,12 @@ var PluginManager = function() {
             response(data);
           });
 
-          parsed._object.emit('request', {
-            "method": "init",
-            "params": parsed
-          });
+          // parsed._object.emit('request', {
+          //   "method": "init",
+          //   "params": parsed
+          // });
+
+          parsed._object.init(parsed);
 
           model.plugins[parsed.id] = parsed;
           break;

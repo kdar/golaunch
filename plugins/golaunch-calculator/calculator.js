@@ -2,42 +2,42 @@ var clipboard = require('clipboard');
 var events = require('events');
 var math = require('mathjs');
 
-var Plugin = function() {
-  var self = this;
-
-  this.on('request', function(data) {
-    if (data.method == "init") {
-      self.metadata = data.params;
-    } else if (data.method == "query") {
-      try {
-        var answer = math.eval(data.params);
-        if (typeof(answer) == "function") {
-          return;
-        }
-
-        // don't care if the answer is only words
-        if (/^[A-Za-z]+$/.test(answer)) {
-          return;
-        }
-
-        //console.dir(answer);
-        self.emit('response', {
-          'result': [{
-            icon: self.metadata._icon,
-            title: "" + answer,
-            subtitle: "Copy this answer to clipboard",
-            score: -1,
-            query: data.params,
-            id: self.metadata.id
-          }]
-        });
-      } catch (e) {}
-    } else if (data.method == "action") {
-      clipboard.writeText(data.params.queryResult.title);
-    }
-  });
-};
+var Plugin = function() {};
 
 Plugin.prototype.__proto__ = events.EventEmitter.prototype;
+
+Plugin.prototype.init = function init(metadata) {
+  this.metadata = metadata;
+};
+
+Plugin.prototype.query = function query(query) {
+  try {
+    var answer = math.eval(query);
+    if (typeof(answer) == "function") {
+      return;
+    }
+
+    // don't care if the answer is only words
+    if (/^[A-Za-z]+$/.test(answer)) {
+      return;
+    }
+
+    //console.dir(answer);
+    this.emit('response', {
+      'result': [{
+        icon: this.metadata._icon,
+        title: "" + answer,
+        subtitle: "Copy this answer to clipboard",
+        score: -1,
+        query: query,
+        id: this.metadata.id
+      }]
+    });
+  } catch (e) {}
+};
+
+Plugin.prototype.action = function action(action) {
+  clipboard.writeText(action.queryResult.title);
+};
 
 module.exports = Plugin;
