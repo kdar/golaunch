@@ -11,18 +11,18 @@
   "dependencies": {
     "concat-stream": "^1.5.1",
     "external-ip": "^0.2.4",
-    "install": "^0.2.6",
+    "install": "^0.4.1",
     "ip": "^1.1.0",
     "mithril": "git://github.com/lhorie/mithril.js.git#next",
     "mousetrap": "^1.5.3",
-    "npm": "^3.3.12",
+    "npm": "^3.5.2",
     "toml": "^2.3.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.1.18",
-    "babel-plugin-mjsx": "^1.0.3",
-    "electron-packager": "^5.1.1",
-    "electron-prebuilt": "^0.35.1",
+    "babel-cli": "^6.4.0",
+    "babel-plugin-mjsx": "^4.0.0",
+    "electron-packager": "^5.2.0",
+    "electron-prebuilt": "^0.36.2",
     "gobble": "^0.10.2",
     "gobble-babel": "^5.5.8"
   }
