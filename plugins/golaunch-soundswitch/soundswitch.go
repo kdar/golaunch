@@ -27,7 +27,7 @@ func (p *Plugin) Init(m sdk.Metadata) {
 }
 
 func (p *Plugin) Query(q string) {
-	if q == "soundswitch" {
+	if strings.HasPrefix(q, "soundswitch") {
 		cmd := exec.Command(".\\vendor\\AudioEndPointController\\Release\\EndPointController.exe")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
