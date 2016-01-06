@@ -6,4 +6,5 @@ version="0.0.1"
 type="stdio"
 main="golaunch-helloworld.exe"
 arguments=""
+enabled=false
 # icon="icon.png"

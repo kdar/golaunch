@@ -76,6 +76,10 @@ var PluginManager = function() {
       fs.createReadStream(path.join(dirPath, 'plugin.toml'), 'utf8').pipe(concat(function(data) {
         var parsed = toml.parse(data);
 
+        if (parsed.enabled === false) {
+          return;
+        }
+        
         if (parsed.icon) {
           parsed._icon = sdk.imageFileToEmbedSync(path.join(dirPath, parsed.icon));
         }
