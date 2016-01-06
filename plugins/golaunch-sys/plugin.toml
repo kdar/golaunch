@@ -6,4 +6,3 @@ version="0.0.1"
 type="js"
 main="sys.js"
 icon=""
-enabled=false
