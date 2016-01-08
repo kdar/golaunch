@@ -1,6 +1,6 @@
 var clipboard = require('clipboard');
 var events = require('events');
-var math = require('mathjs');
+var math = null;
 
 var Plugin = function() {};
 
@@ -11,6 +11,11 @@ Plugin.prototype.init = function init(metadata) {
 };
 
 Plugin.prototype.query = function query(query) {
+  // delay load math module
+  if (math == null) {
+    math = require('mathjs');
+  }
+
   try {
     var answer = math.eval(query);
     if (typeof(answer) == "function") {
