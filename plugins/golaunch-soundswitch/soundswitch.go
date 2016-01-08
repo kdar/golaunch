@@ -1,15 +1,30 @@
 package main
 
 import (
-	"bufio"
+	"encoding/json"
 	"fmt"
 	sdk "golaunch/sdk/go"
 	"golaunch/sdk/go/plugin"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+const (
+	aepFormat = `{"index":%d,"friendlyName":"%ws","state":%d,"default":%d,"description":"%ws","interfaceFriendlyName":"%ws","deviceID":"%ws"}`
+)
+
+type Device struct {
+	Index                 int    `json:"index"`
+	FriendlyName          string `json:"friendlyName"`
+	State                 int    `json:"state"` //active or not
+	Default               int    `json:"default"`
+	Description           string `json:"description"`
+	InterfaceFriendlyName string `json:"interfaceFriendlyName"`
+	DeviceID              string `json:"deviceID"`
+}
 
 type Plugin struct {
 	metadata sdk.Metadata
@@ -28,7 +43,7 @@ func (p *Plugin) Init(m sdk.Metadata) {
 
 func (p *Plugin) Query(q string) {
 	if strings.HasPrefix(q, "soundswitch") {
-		cmd := exec.Command(".\\vendor\\AudioEndPointController\\Release\\EndPointController.exe")
+		cmd := exec.Command(".\\vendor\\AudioEndPointController\\Release\\EndPointController.exe", "-f", aepFormat)
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Println(err)
@@ -40,29 +55,33 @@ func (p *Plugin) Query(q string) {
 			return
 		}
 
+		decoder := json.NewDecoder(stdout)
 		var results []sdk.QueryResult
-		scanner := bufio.NewScanner(stdout)
-		index := 1
-		for scanner.Scan() {
-			line := scanner.Text()
-			parts := strings.SplitN(line, ": ", 2)
-			if len(parts) != 2 {
-				continue
+		for {
+			var device Device
+			if err := decoder.Decode(&device); err == io.EOF {
+				break
+			} else if err != nil {
+				log.Println(err)
 			}
 
-			results = append(results, sdk.QueryResult{
+			result := sdk.QueryResult{
 				Program: sdk.Program{
 					Icon: p.metadata.Icon,
 				},
-				Title:    parts[1],
-				Subtitle: parts[0],
-				Query:    q,
-				ID:       p.metadata.ID,
-				Score:    -1,
-				Data:     fmt.Sprintf("%d", index),
-			})
+				Title: device.FriendlyName,
+				//Subtitle: fmt.Sprintf("Audio Device %d", device.Index),
+				Query: q,
+				ID:    p.metadata.ID,
+				Score: -1,
+				Data:  fmt.Sprintf("%d", device.Index),
+			}
 
-			index += 1
+			if device.Default == 1 {
+				result.Subtitle = "Default"
+			}
+
+			results = append(results, result)
 		}
 
 		if err := cmd.Wait(); err != nil {
