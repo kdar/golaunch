@@ -9,6 +9,12 @@ var events = require('events');
 var domain = require('domain');
 var sdk = require('../sdk/js/sdk');
 
+var elapsedTime = function(hrtime) {
+  var precision = 3; // 3 decimal places
+  var elapsed = process.hrtime(hrtime)[1] / 1000000; // divide by a million to get nano to milli
+  return process.hrtime(hrtime)[0] + "s" + elapsed.toFixed(precision) + "ms";
+}
+
 var PluginManager = function() {
   var self = this;
   var model = {
@@ -81,11 +87,14 @@ var PluginManager = function() {
   var loadFromPath = function(dirPath) {
     var d = domain.create();
     d.on('error', function(err) {
-      console.error(err);
+      console.error(err.stack);
     });
     d.run(function() {
       fs.createReadStream(path.join(dirPath, 'plugin.toml'), 'utf8').pipe(concat(function(data) {
         var parsed = toml.parse(data);
+
+        var startTime = process.hrtime();
+        console.log(parsed.name + ": loading...");
 
         if (parsed.enabled === false) {
           return;
@@ -145,6 +154,8 @@ var PluginManager = function() {
           model.plugins[parsed.id] = parsed;
           break;
         }
+
+        console.log(parsed.name + ": took " + elapsedTime(startTime));
       }));
     });
   };
