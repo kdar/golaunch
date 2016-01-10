@@ -134,7 +134,10 @@ func (p *Plugin) Query(q string) {
 	results := p.catalog.Query(q)
 	if results != nil && len(results) > 0 {
 		p.client.Call("queryresults", results)
+		return
 	}
+
+	p.client.Call("noqueryresults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {

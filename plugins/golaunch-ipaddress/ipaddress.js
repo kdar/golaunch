@@ -98,7 +98,10 @@ Plugin.prototype.query = function query(query) {
 
       p.client.call("queryresults", results);
     });
+    return;
   }
+
+  this.client.call("noqueryresults", null);
 };
 
 Plugin.prototype.action = function action(action) {

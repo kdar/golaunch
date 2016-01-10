@@ -65,7 +65,10 @@ Plugin.prototype.query = function query(query) {
 
   if (results.length > 0) {
     p.client.call("queryresults", results);
+    return;
   }
+
+  this.client.call("noqueryresults", null);
 };
 
 Plugin.prototype.action = function action(action) {

@@ -90,7 +90,10 @@ func (p *Plugin) Query(q string) {
 		}
 
 		p.client.Call("queryresults", results)
+		return
 	}
+
+	p.client.Call("noqueryresults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {

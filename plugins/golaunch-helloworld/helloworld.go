@@ -31,7 +31,10 @@ func (p *Plugin) Query(q string) {
 			ID:       p.metadata.ID,
 			Score:    -1,
 		}})
+		return
 	}
+
+	p.client.Call("noqueryresults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {

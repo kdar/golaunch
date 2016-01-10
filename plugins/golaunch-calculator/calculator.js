@@ -31,7 +31,11 @@ Plugin.prototype.query = function query(query) {
       query: query,
       id: this.metadata.id
     }]);
+    
+    return;
   } catch (e) {}
+
+  this.client.call("noqueryresults", null);
 };
 
 Plugin.prototype.action = function action(action) {

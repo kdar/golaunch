@@ -42,6 +42,7 @@ var PluginManager = function() {
       break;
 
     case 'noqueryresults':
+      break;
 
     case 'queryresults': // just query results
       // console.log(data.params);

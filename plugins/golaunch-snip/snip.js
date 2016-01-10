@@ -28,7 +28,11 @@ Plugin.prototype.query = function query(query) {
       query: query,
       id: self.metadata.id
     }]);
+
+    return;
   }
+
+  this.client.call("noqueryresults", null);
 };
 
 Plugin.prototype.action = function action(action) {
