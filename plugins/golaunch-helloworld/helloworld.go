@@ -24,7 +24,7 @@ func (p *Plugin) Init(m sdk.Metadata) {
 
 func (p *Plugin) Query(q string) {
 	if q == "helloworld" {
-		p.client.QueryResults([]sdk.QueryResult{{
+		p.client.Call("queryresults", []sdk.QueryResult{{
 			Title:    "Hello back to you!",
 			Subtitle: "From the helloworld plugin",
 			Query:    q,

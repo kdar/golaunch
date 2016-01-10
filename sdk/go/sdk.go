@@ -13,7 +13,8 @@ type Request struct {
 }
 
 type Response struct {
-	Result []QueryResult `json:"result"`
+	Method string      `json:"method"`
+	Params interface{} `json:"params"`
 }
 
 type Program struct {

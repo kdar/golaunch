@@ -23,7 +23,7 @@ Plugin.prototype.query = function query(query) {
     }
 
     //console.dir(answer);
-    this.client.queryResults([{
+    this.client.call("queryresults", [{
       icon: this.metadata._icon,
       title: "" + answer,
       subtitle: "Copy this answer to clipboard",

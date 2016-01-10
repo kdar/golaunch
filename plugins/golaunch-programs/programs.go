@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	sdk "golaunch/sdk/go"
 	"golaunch/sdk/go/idletime"
+	"golaunch/sdk/go/plugin"
 	"golaunch/sdk/go/system"
 	"log"
 	"os"
@@ -13,7 +12,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/atotto/clipboard"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -49,9 +47,26 @@ type Config struct {
 	Sources              []Source      `toml:"sources"`
 }
 
-func main() {
-	log.SetFlags(log.Lshortfile)
-	log.SetOutput(os.Stderr)
+type Plugin struct {
+	metadata sdk.Metadata
+	client   *plugin.Client
+	system   *system.System
+	cfg      *Config
+	catalog  *Catalog
+}
+
+func NewPlugin() *Plugin {
+	p := &Plugin{
+		client: plugin.NewClient(),
+		// FIXME: how to defer system.Close()??
+		system: system.NewSystem(),
+	}
+
+	return p
+}
+
+func (p *Plugin) Init(m sdk.Metadata) {
+	p.metadata = m
 
 	var cfg Config
 	if _, err := toml.DecodeFile("settings.toml", &cfg); err != nil {
@@ -70,17 +85,10 @@ func main() {
 		}
 	}
 
-	system := system.NewSystem()
-	defer system.Close()
-
-	// empty for now, but will be filled by "init"
-	var metadata sdk.Metadata
-
-	catalog := NewCatalog(&metadata, &cfg, system)
+	catalog := NewCatalog(&p.metadata, &cfg, p.system)
 	if err := catalog.Init(); err != nil {
 		log.Fatal(err)
 	}
-	defer catalog.Shutdown()
 
 	if cfg.ScanOnStartupIfEmpty && catalog.IsEmpty() {
 		go catalog.Index()
@@ -116,76 +124,41 @@ func main() {
 		}()
 	}
 
-	// var ppid int
-	var cmdRun = &cobra.Command{
-		Use:   "run",
-		Short: "Runs the backend",
-		Long:  `Runs the backend`,
-		Run: func(cmd *cobra.Command, args []string) {
-			dec := json.NewDecoder(os.Stdin)
-			enc := json.NewEncoder(os.Stdout)
+	p.cfg = &cfg
+	p.catalog = catalog
 
-			for {
-				var v sdk.Request
-				if err := dec.Decode(&v); err != nil {
-					continue
-				}
+	// FIXME: how to defer catalog.Shutdown()??
+}
 
-				switch v.Method {
-				case "init":
-					json.Unmarshal(v.Params, &metadata)
-				case "query":
-					var query string
-					json.Unmarshal(v.Params, &query)
-
-					results := catalog.Query(query)
-					if results != nil && len(results) > 0 {
-						msg := sdk.Response{
-							Result: results,
-						}
-
-						start := time.Now()
-						enc.Encode(msg)
-						fmt.Fprintf(os.Stderr, "json encoding: %v\n", time.Now().Sub(start))
-					}
-
-					// start = time.Now()
-					// a.Reset()
-					// fresults := []flatbuffers.UOffsetT{}
-					// for x := 0; x < len(results); x++ {
-					// 	fresults = append(fresults, a.CreateQueryResult(
-					// 		results[x].Title,
-					// 		results[x].Subtitle,
-					// 		results[x].Image,
-					// 		results[x].Query,
-					// 		results[x].Score))
-					// }
-					// a.CreateResponse(v.ID, fresults)
-					// fmt.Fprintf(os.Stderr, "flatbuffers encoding: %v\n", time.Now().Sub(start))
-				case "action":
-					var param sdk.Action
-					json.Unmarshal(v.Params, &param)
-
-					if param.Type == "contextmenu" {
-						switch param.Name {
-						case "Copy path":
-							clipboard.WriteAll(param.QueryResult.Path)
-						case "Open containing folder":
-							system.OpenFolder(filepath.Dir(param.QueryResult.Path))
-						case "Run as admin":
-						}
-					} else {
-						catalog.used(param.QueryResult)
-						if err := system.RunProgram(param.QueryResult.Path, "", "", ""); err != nil {
-							log.Println(err)
-						}
-					}
-				}
-			}
-		},
+func (p *Plugin) Query(q string) {
+	results := p.catalog.Query(q)
+	if results != nil && len(results) > 0 {
+		p.client.Call("queryresults", results)
 	}
+}
 
-	var rootCmd = &cobra.Command{Use: "app"}
-	rootCmd.AddCommand(cmdRun)
-	rootCmd.Execute()
+func (p *Plugin) Action(a sdk.Action) {
+	if a.Type == "contextmenu" {
+		switch a.Name {
+		case "Copy path":
+			clipboard.WriteAll(a.QueryResult.Path)
+		case "Open containing folder":
+			p.system.OpenFolder(filepath.Dir(a.QueryResult.Path))
+		case "Run as admin":
+		}
+	} else {
+		p.catalog.used(a.QueryResult)
+		if err := p.system.RunProgram(a.QueryResult.Path, "", "", ""); err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func main() {
+	log.SetFlags(log.Lshortfile)
+	log.SetOutput(os.Stderr)
+
+	s := plugin.NewServer()
+	s.Register(NewPlugin())
+	s.Serve()
 }

@@ -38,11 +38,14 @@ var PluginManager = function() {
     // their own process so they can't block other plugins or the UI if
     // they are slow.
     case 'eval':
-      eval(data.params[0]);
+      eval(data.params);
       break;
 
-    default: // just query results
-      queryResults.push.apply(queryResults, data.result);
+    case 'noqueryresults':
+
+    case 'queryresults': // just query results
+      // console.log(data.params);
+      queryResults.push.apply(queryResults, data.params);
 
       queryResults.sort(function(a, b) {
         if (a.score == -1) {

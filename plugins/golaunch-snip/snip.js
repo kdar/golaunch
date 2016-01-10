@@ -20,7 +20,7 @@ Plugin.prototype.query = function query(query) {
   var self = this;
 
   if (query.startsWith("snip")) {
-    this.client.queryResults([{
+    this.client.call("queryresults", [{
       icon: self.metadata._icon,
       title: "Screen Snipping",
       subtitle: "Snip screen to clipboard",

@@ -16,18 +16,10 @@ type Client struct {
 	enc *json.Encoder
 }
 
-func (c *Client) QueryResults(results []sdk.QueryResult) {
+func (c *Client) Call(method string, params interface{}) {
 	msg := sdk.Response{
-		Result: results,
-	}
-	c.enc.Encode(msg)
-}
-
-func (c *Client) Call(method string, params ...string) {
-	data, _ := json.Marshal(params)
-	msg := sdk.Request{
 		Method: method,
-		Params: data,
+		Params: params,
 	}
 	c.enc.Encode(msg)
 }

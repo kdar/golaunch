@@ -1,12 +1,12 @@
 function Client() {};
 
-Client.prototype.queryResults = function queryResults(results) {
-  process.send({
-    'result': results
-  });
-};
+// Client.prototype.queryResults = function queryResults(results) {
+//   process.send({
+//     'result': results
+//   });
+// };
 
-Client.prototype.call = function call(method/*, ...*/) {
+Client.prototype.call = function call(method, params) {
   // var params = null;
   // if (arguments.length == 2) {
   //   params = arguments[1];
@@ -16,7 +16,7 @@ Client.prototype.call = function call(method/*, ...*/) {
 
   process.send({
     'method': method,
-    'params': [].splice.call(arguments, 1)
+    'params': params
   });
 };
 

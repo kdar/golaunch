@@ -96,7 +96,7 @@ Plugin.prototype.query = function query(query) {
         data: localip
       });
 
-      p.client.queryResults(results);
+      p.client.call("queryresults", results);
     });
   }
 };

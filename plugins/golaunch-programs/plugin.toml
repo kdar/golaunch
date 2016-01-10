@@ -5,6 +5,6 @@ author="Kevin Darlington <kevin@outroot.com>"
 version="0.0.1"
 type="stdio"
 main="golaunch-programs.exe"
-arguments=["run"]
+# arguments=["run"]
 icon="icon.png"
 enabled=true

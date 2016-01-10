@@ -89,7 +89,7 @@ func (p *Plugin) Query(q string) {
 			return
 		}
 
-		p.client.QueryResults(results)
+		p.client.Call("queryresults", results)
 	}
 }
 

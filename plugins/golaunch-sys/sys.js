@@ -1,7 +1,6 @@
 var events = require('events');
 var fuzzy = require('../../sdk/js/fuzzy');
 var sdk = require('../../sdk/js/sdk');
-var spawn = require('child_process').spawn;
 var path = require('path');
 var plugin = require('../../sdk/js/plugin');
 
@@ -65,23 +64,25 @@ Plugin.prototype.query = function query(query) {
   }
 
   if (results.length > 0) {
-    p.client.queryResults(results);
+    p.client.call("queryresults", results);
   }
 };
 
 Plugin.prototype.action = function action(action) {
   if (action.queryResult.data == "restart") {
-    this.client.call("eval", [
-      "const args = process.argv.slice(1);",
+    function restart() {
+      const args = process.argv.slice(1);
       //const out = fs.openSync('./out.log', 'a');
       //const err = fs.openSync('./out.log', 'a');
-      "var child = spawn(process.argv[0], args, {",
-      "  detached: true,",
+      var child = spawn(process.argv[0], args, {
+        detached: true,
         //stdio: [ 'ignore', out, err ]
-      "});",
-      "child.unref();",
-      "app.quit();"
-    ].join(""));
+      });
+      child.unref();
+      app.quit();
+    }
+
+    this.client.call("eval", "("+restart.toString()+")()");
   } else if (action.queryResult.data == "quit" || action.queryResult.data == "exit") {
     this.client.call("eval", "app.quit();");
   }
