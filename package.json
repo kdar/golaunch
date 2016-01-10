@@ -5,12 +5,12 @@
   "main": "index.js",
   "author": "Kevin Darlington <kevin@outroot.com>",
   "scripts": {
-    "start": "node_modules/.bin/electron ."
+    "start": "node_modules/.bin/electron .",
+    "rebuild": ".\\node_modules\\.bin\\electron-rebuild.cmd"
   },
   "private": true,
   "dependencies": {
     "concat-stream": "^1.5.1",
-    "electron-prebuilt": "^0.36.3",
     "install": "^0.4.1",
     "ip": "^1.1.0",
     "mithril": "git://github.com/lhorie/mithril.js.git#next",
@@ -23,6 +23,7 @@
     "babel-plugin-mjsx": "^1.0.3",
     "electron-packager": "^5.2.0",
     "electron-prebuilt": "^0.36.3",
+    "electron-rebuild": "^1.0.2",
     "gobble": "^0.10.2",
     "gobble-babel": "^5.5.8"
   }
