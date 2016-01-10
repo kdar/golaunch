@@ -7,3 +7,4 @@ type="stdio"
 main="golaunch-programs.exe"
 arguments=["run"]
 icon="icon.png"
+enabled=true

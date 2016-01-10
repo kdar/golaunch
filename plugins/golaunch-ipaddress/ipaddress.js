@@ -1,9 +1,8 @@
-var electron = require('electron');
-var app = electron.app;
 var events = require('events');
-var clipboard = require('clipboard');
+var ncp = require("copy-paste");
 var locip = require('ip');
 var http = require('http');
+var plugin = require('../../sdk/js/plugin');
 
 var extip = function(cb) {
   var services = [
@@ -57,7 +56,9 @@ var extip = function(cb) {
   });
 };
 
-var Plugin = function() {};
+var Plugin = function() {
+  this.client = new plugin.Client();
+};
 
 Plugin.prototype.__proto__ = events.EventEmitter.prototype;
 
@@ -66,7 +67,7 @@ Plugin.prototype.init = function init(metadata) {
 };
 
 Plugin.prototype.query = function query(query) {
-  var self = this;
+  var p = this;
 
   if (query.startsWith("ipaddress")) {
     extip(function(err, eip) {
@@ -74,36 +75,36 @@ Plugin.prototype.query = function query(query) {
 
       if (!err) {
         results.push({
-          icon: self.metadata._icon,
+          icon: p.metadata._icon,
           title: "External IP: " + eip,
           subtitle: "Copy to clipboard",
           score: -1,
           query: query,
-          id: self.metadata.id,
+          id: p.metadata.id,
           data: eip
         });
       }
 
       var localip = locip.address();
       results.push({
-        icon: self.metadata._icon,
+        icon: p.metadata._icon,
         title: "Local IP: " + localip,
         subtitle: "Copy to clipboard",
         score: -1,
         query: query,
-        id: self.metadata.id,
+        id: p.metadata.id,
         data: localip
       });
 
-      self.emit('response', {
-        'result': results
-      });
+      p.client.queryResults(results);
     });
   }
 };
 
 Plugin.prototype.action = function action(action) {
-  clipboard.writeText(action.queryResult.data);
+  ncp.copy(action.queryResult.data);
 };
 
-module.exports = Plugin;
+var server = new plugin.Server();
+server.register(new Plugin());
+server.serve();

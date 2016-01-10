@@ -7,3 +7,4 @@ type="stdio"
 main="golaunch-process-killer.exe"
 arguments=""
 icon="icon.png"
+enabled=true

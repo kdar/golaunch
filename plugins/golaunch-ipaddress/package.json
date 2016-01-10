@@ -1,8 +1,8 @@
 {
-  "name": "calculator",
+  "name": "ipaddress",
   "version": "0.0.1",
-  "description": "A highly scientific calculator using math.js",
-  "main": "calculator.js",
+  "description": "Retrieve your local and external ip address.",
+  "main": "ipaddress.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "copy-paste": "^1.1.4",
-    "mathjs": "^2.4.1"
+    "ip": "^1.1.0"
   }
 }

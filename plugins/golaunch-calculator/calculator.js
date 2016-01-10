@@ -1,21 +1,16 @@
-var clipboard = require('clipboard');
-var events = require('events');
-var math = null;
+var ncp = require("copy-paste");
+var math = require('mathjs');
+var plugin = require('../../sdk/js/plugin');
 
-var Plugin = function() {};
-
-Plugin.prototype.__proto__ = events.EventEmitter.prototype;
+var Plugin = function() {
+  this.client = new plugin.Client();
+};
 
 Plugin.prototype.init = function init(metadata) {
   this.metadata = metadata;
 };
 
 Plugin.prototype.query = function query(query) {
-  // delay load math module
-  if (math == null) {
-    math = require('mathjs');
-  }
-
   try {
     var answer = math.eval(query);
     if (typeof(answer) == "function") {
@@ -28,21 +23,21 @@ Plugin.prototype.query = function query(query) {
     }
 
     //console.dir(answer);
-    this.emit('response', {
-      'result': [{
-        icon: this.metadata._icon,
-        title: "" + answer,
-        subtitle: "Copy this answer to clipboard",
-        score: -1,
-        query: query,
-        id: this.metadata.id
-      }]
-    });
+    this.client.queryResults([{
+      icon: this.metadata._icon,
+      title: "" + answer,
+      subtitle: "Copy this answer to clipboard",
+      score: -1,
+      query: query,
+      id: this.metadata.id
+    }]);
   } catch (e) {}
 };
 
 Plugin.prototype.action = function action(action) {
-  clipboard.writeText(action.queryResult.title);
+  ncp.copy(action.queryResult.title);
 };
 
-module.exports = Plugin;
+var server = new plugin.Server();
+server.register(new Plugin());
+server.serve();

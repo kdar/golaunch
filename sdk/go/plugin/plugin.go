@@ -23,6 +23,15 @@ func (c *Client) QueryResults(results []sdk.QueryResult) {
 	c.enc.Encode(msg)
 }
 
+func (c *Client) Call(method string, params ...string) {
+	data, _ := json.Marshal(params)
+	msg := sdk.Request{
+		Method: method,
+		Params: data,
+	}
+	c.enc.Encode(msg)
+}
+
 func NewClient() *Client {
 	return &Client{
 		enc: json.NewEncoder(os.Stdout),

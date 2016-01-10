@@ -1,15 +1,16 @@
-var electron = require('electron');
-var app = electron.app;
 var events = require('events');
 var fuzzy = require('../../sdk/js/fuzzy');
 var sdk = require('../../sdk/js/sdk');
 var spawn = require('child_process').spawn;
 var path = require('path');
+var plugin = require('../../sdk/js/plugin');
 
 var Plugin = function() {
-  var self = this;
+  var p = this;
 
-  self.commands = {
+  p.client = new plugin.Client();
+
+  p.commands = {
     "restart": {
       title: "Restart GoLaunch",
       subtitle: "Restarts the application immediately."
@@ -25,14 +26,14 @@ var Plugin = function() {
   };
 
   sdk.imageFileToEmbed(path.join(__dirname, "images", "exit.png")).then(function(img) {
-    self.commands["quit"].icon = img;
-    self.commands["exit"].icon = img;
+    p.commands["quit"].icon = img;
+    p.commands["exit"].icon = img;
   }, function(err) {
     console.error(err);
   });
 
   sdk.imageFileToEmbed(path.join(__dirname, "images", "restart.png")).then(function(img) {
-    self.commands["restart"].icon = img;
+    p.commands["restart"].icon = img;
   }, function(err) {
     console.error(err);
   });
@@ -45,45 +46,47 @@ Plugin.prototype.init = function init(metadata) {
 };
 
 Plugin.prototype.query = function query(query) {
-  var self = this;
+  var p = this;
 
   var results = [];
-  for (var key in self.commands) {
+  for (var key in p.commands) {
     var match = fuzzy.match(query, key);
     if (match.success) {
       results.push({
-        icon: self.commands[key].icon,
-        title: self.commands[key].title,
-        subtitle: self.commands[key].subtitle,
+        icon: p.commands[key].icon,
+        title: p.commands[key].title,
+        subtitle: p.commands[key].subtitle,
         score: match.score,
         query: query,
-        id: self.metadata.id,
+        id: p.metadata.id,
         data: key
       });
     }
   }
 
   if (results.length > 0) {
-    self.emit('response', {
-      'result': results
-    });
+    p.client.queryResults(results);
   }
 };
 
 Plugin.prototype.action = function action(action) {
   if (action.queryResult.data == "restart") {
-    const args = process.argv.slice(1);
-    //const out = fs.openSync('./out.log', 'a');
-    //const err = fs.openSync('./out.log', 'a');
-    var child = spawn(process.argv[0], args, {
-      detached: true,
-      //stdio: [ 'ignore', out, err ]
-    });
-    child.unref();
-    app.quit();
+    this.client.call("eval", [
+      "const args = process.argv.slice(1);",
+      //const out = fs.openSync('./out.log', 'a');
+      //const err = fs.openSync('./out.log', 'a');
+      "var child = spawn(process.argv[0], args, {",
+      "  detached: true,",
+        //stdio: [ 'ignore', out, err ]
+      "});",
+      "child.unref();",
+      "app.quit();"
+    ].join(""));
   } else if (action.queryResult.data == "quit" || action.queryResult.data == "exit") {
-    app.quit();
+    this.client.call("eval", "app.quit();");
   }
 };
 
-module.exports = Plugin;
+var server = new plugin.Server();
+server.register(new Plugin());
+server.serve();

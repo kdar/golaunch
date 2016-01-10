@@ -8,6 +8,7 @@ var concat = require('concat-stream');
 var events = require('events');
 var domain = require('domain');
 var sdk = require('../sdk/js/sdk');
+var child_process = require('child_process');
 
 var elapsedTime = function(hrtime) {
   var precision = 3; // 3 decimal places
@@ -25,29 +26,37 @@ var PluginManager = function() {
   var lastQuery = null;
   var queryResults = [];
 
-  function response(data) {
-    // process.nextTick(function () {
-    //   self.emit('plugin_response', data);
-    // });
-
+  // a function that is called when we get some sort of plugin data
+  function pluginData(data) {
     // if (!data.result || data.result.length == 0) {
     //   return;
     // }
 
-    queryResults.push.apply(queryResults, data.result);
+    switch (data.method) {
+    // this could be considered dangerous, but originally all the js plugins
+    // were loaded into the electron process anyway. I changed them to be
+    // their own process so they can't block other plugins or the UI if
+    // they are slow.
+    case 'eval':
+      eval(data.params[0]);
+      break;
 
-    queryResults.sort(function(a, b) {
-      if (a.score == -1) {
-        return -1;
-      } else if (b.score == -1) {
-        return 1;
-      }
-      return b.score - a.score;
-    });
+    default: // just query results
+      queryResults.push.apply(queryResults, data.result);
 
-    process.nextTick(function () {
-      self.emit('query-results', queryResults);
-    });
+      queryResults.sort(function(a, b) {
+        if (a.score == -1) {
+          return -1;
+        } else if (b.score == -1) {
+          return 1;
+        }
+        return b.score - a.score;
+      });
+
+      process.nextTick(function () {
+        self.emit('query-results', queryResults);
+      });
+    }
   };
 
   var pluginRequest = function(data) {
@@ -65,21 +74,23 @@ var PluginManager = function() {
       });
       break;
     case 'js':
-      var _object = plugin._object;
+      var _process = plugin._process;
       process.nextTick(function () {
-        //_object.emit('request', data);
-        switch (data.method) {
-        case "init":
-          _object.init(data.params);
-          break;
-        case "query":
-          _object.query(data.params);
-          break;
-        case "action":
-          _object.action(data.params);
-          break;
-        };
+        _process.send(data);
       });
+      // process.nextTick(function () {
+      //   switch (data.method) {
+      //   case "init":
+      //     _object.init(data.params);
+      //     break;
+      //   case "query":
+      //     _object.query(data.params);
+      //     break;
+      //   case "action":
+      //     _object.action(data.params);
+      //     break;
+      //   };
+      // });
       break;
     }
   };
@@ -120,7 +131,7 @@ var PluginManager = function() {
           // });
           //
           plugin.stdout.on('data', function(data) {
-            response(JSON.parse(data));
+            pluginData(JSON.parse(data));
           });
 
           plugin.stderr.on('data', function(data) {
@@ -137,19 +148,27 @@ var PluginManager = function() {
           model.plugins[parsed.id] = parsed;
           break;
         case 'js':
-          var cls = require(path.join(dirPath, parsed.main));
-          parsed._object = new cls();
+          // var cls = require(path.join(dirPath, parsed.main));
+          // parsed._object = new cls();
+          //
+          // parsed._object.on('response', function(data) {
+          //   response(data);
+          // });
+          //
+          // parsed._object.init(parsed);
 
-          parsed._object.on('response', function(data) {
-            response(data);
+          var child = child_process.fork(path.join(dirPath, parsed.main));
+
+          child.on('message', function(m) {
+            pluginData(m);
           });
 
-          // parsed._object.emit('request', {
-          //   "method": "init",
-          //   "params": parsed
-          // });
+          child.send({
+            method: "init",
+            params: parsed
+          });
 
-          parsed._object.init(parsed);
+          parsed._process = child;
 
           model.plugins[parsed.id] = parsed;
           break;

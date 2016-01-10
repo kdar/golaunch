@@ -7,3 +7,4 @@ type="stdio"
 main="golaunch-soundswitch.exe"
 arguments=""
 icon="icon.png"
+enabled=true
