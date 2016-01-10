@@ -81,7 +81,7 @@ Plugin.prototype.query = function query(query) {
           score: -1,
           query: query,
           id: p.metadata.id,
-          data: eip
+          data: String(eip).trim()
         });
       }
 
