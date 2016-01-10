@@ -78,19 +78,6 @@ var PluginManager = function() {
       process.nextTick(function () {
         _process.send(data);
       });
-      // process.nextTick(function () {
-      //   switch (data.method) {
-      //   case "init":
-      //     _object.init(data.params);
-      //     break;
-      //   case "query":
-      //     _object.query(data.params);
-      //     break;
-      //   case "action":
-      //     _object.action(data.params);
-      //     break;
-      //   };
-      // });
       break;
     }
   };
@@ -148,15 +135,6 @@ var PluginManager = function() {
           model.plugins[parsed.id] = parsed;
           break;
         case 'js':
-          // var cls = require(path.join(dirPath, parsed.main));
-          // parsed._object = new cls();
-          //
-          // parsed._object.on('response', function(data) {
-          //   response(data);
-          // });
-          //
-          // parsed._object.init(parsed);
-
           var child = child_process.fork(path.join(dirPath, parsed.main));
 
           child.on('message', function(m) {
