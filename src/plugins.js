@@ -41,6 +41,10 @@ var PluginManager = function() {
       eval(data.params);
       break;
 
+    case 'log':
+      console.log(data.params);
+      break;
+
     case 'noqueryresults':
       break;
 
