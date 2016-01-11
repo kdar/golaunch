@@ -87,7 +87,7 @@ var PluginManager = function() {
         _process.send(data);
       });
       break;
-    case 'html':
+    case 'electron':
       var _process = plugin._process;
       _process.webContents.send("plugin-" + _process.id, data);
     }
@@ -161,7 +161,7 @@ var PluginManager = function() {
 
           model.plugins[parsed.id] = parsed;
           break;
-        case 'html':
+        case 'electron':
           var win = new BrowserWindow({
         		show: false
         	});
