@@ -31,7 +31,7 @@ Plugin.prototype.query = function query(query) {
       query: query,
       id: this.metadata.id
     }]);
-    
+
     return;
   } catch (e) {}
 

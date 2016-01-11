@@ -1,14 +1,17 @@
-var electron = require('electron');
-var app = electron.app;
-var path = require('path');
-var spawn = require('child_process').spawn;
-var fs = require('fs');
-var toml = require('toml');
-var concat = require('concat-stream');
-var events = require('events');
-var domain = require('domain');
-var sdk = require('../sdk/js/sdk');
-var child_process = require('child_process');
+const electron = require('electron');
+const app = electron.app;
+const ipcMain = electron.ipcMain;
+const BrowserWindow = electron.BrowserWindow;
+// const remote = electron.remote;
+const path = require('path');
+const spawn = require('child_process').spawn;
+const fs = require('fs');
+const toml = require('toml');
+const concat = require('concat-stream');
+const events = require('events');
+const domain = require('domain');
+const sdk = require('../sdk/js/sdk');
+const child_process = require('child_process');
 
 var elapsedTime = function(hrtime) {
   var precision = 3; // 3 decimal places
@@ -33,10 +36,7 @@ var PluginManager = function() {
     // }
 
     switch (data.method) {
-    // this could be considered dangerous, but originally all the js plugins
-    // were loaded into the electron process anyway. I changed them to be
-    // their own process so they can't block other plugins or the UI if
-    // they are slow.
+    // This is here so plugins not using JS can run JS code.
     case 'eval':
       eval(data.params);
       break;
@@ -83,6 +83,9 @@ var PluginManager = function() {
         _process.send(data);
       });
       break;
+    case 'html':
+      var _process = plugin._process;
+      _process.webContents.send("plugin-" + _process.id, data);
     }
   };
 
@@ -151,6 +154,27 @@ var PluginManager = function() {
           });
 
           parsed._process = child;
+
+          model.plugins[parsed.id] = parsed;
+          break;
+        case 'html':
+          var win = new BrowserWindow({
+        		show: false
+        	});
+        	win.loadURL(`file://` + path.join(dirPath, parsed.main));
+
+          ipcMain.on("plugin-" + win.id, function(event, arg) {
+            pluginData(arg);
+          });
+
+          win.webContents.once('did-finish-load', function() {
+            win.webContents.send("plugin-" + win.id, {
+              method: "init",
+              params: parsed
+            });
+          });
+
+          parsed._process = win;
 
           model.plugins[parsed.id] = parsed;
           break;

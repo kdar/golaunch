@@ -1,26 +1,25 @@
-function Client() {};
+const electron = require('electron');
+const ipcRenderer = electron.ipcRenderer;
 
-// Client.prototype.queryResults = function queryResults(results) {
-//   process.send({
-//     'result': results
-//   });
-// };
+function Client() {
+  this.windowID = electron.remote.getCurrentWindow().id;
+};
 
 Client.prototype.call = function call(method, params) {
-  // var params = null;
-  // if (arguments.length == 2) {
-  //   params = arguments[1];
-  // } else if (arguments.length > 2) {
-  //   params = arguments.splice(1);
-  // }
-
-  process.send({
+  // process.send({
+  //   'method': method,
+  //   'params': params
+  // });
+  console.log("caca: plugin-" + this.windowID);
+  ipcRenderer.send("plugin-" + this.windowID, {
     'method': method,
     'params': params
   });
 };
 
-function Server() {};
+function Server() {
+  this.windowID = electron.remote.getCurrentWindow().id;
+};
 
 Server.prototype.register = function register(plugin) {
   this.p = plugin;
@@ -28,7 +27,20 @@ Server.prototype.register = function register(plugin) {
 
 Server.prototype.serve = function serve() {
   var s = this;
-  process.on('message', function(m) {
+  // process.on('message', function(m) {
+  //   switch (m.method) {
+	// 	case "init":
+	// 		s.p.init(m.params)
+  //     break;
+	// 	case "query":
+	// 		s.p.query(m.params)
+  //     break;
+	// 	case "action":
+	// 		s.p.action(m.params)
+  //     break;
+	// 	}
+  // });
+  ipcRenderer.on("plugin-" + this.windowID, function(event, m) {
     switch (m.method) {
 		case "init":
 			s.p.init(m.params)
