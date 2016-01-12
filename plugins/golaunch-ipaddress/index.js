@@ -101,7 +101,7 @@ Plugin.prototype.query = function query(query) {
     return;
   }
 
-  this.client.call("noqueryresults", null);
+  p.client.call("noqueryresults", null);
 };
 
 Plugin.prototype.action = function action(action) {

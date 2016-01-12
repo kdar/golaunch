@@ -28,6 +28,10 @@ var PluginManager = function() {
   // for queries
   var lastQuery = null;
   var queryResults = [];
+  var queryProgress = {
+    count: 0,
+    current: 0
+  }
 
   // a function that is called when we get some sort of plugin data
   function pluginData(data) {
@@ -46,9 +50,14 @@ var PluginManager = function() {
       break;
 
     case 'noqueryresults':
+      queryProgress.current += 1;
+      self.emit('progress-update', queryProgress);
       break;
 
     case 'queryresults': // just query results
+      queryProgress.current += 1;
+      self.emit('progress-update', queryProgress);
+
       // console.log(data.params);
       queryResults.push.apply(queryResults, data.params);
 
@@ -64,6 +73,11 @@ var PluginManager = function() {
       process.nextTick(function () {
         self.emit('query-results', queryResults);
       });
+
+      break;
+
+    default:
+      console.log("unrecognized plugin data:", data);
     }
   };
 
@@ -144,6 +158,7 @@ var PluginManager = function() {
           parsed._process = plugin;
 
           model.plugins[parsed.id] = parsed;
+          queryProgress.count += 1;
           break;
         case 'js':
           var child = child_process.fork(path.join(dirPath, parsed.main));
@@ -160,6 +175,7 @@ var PluginManager = function() {
           parsed._process = child;
 
           model.plugins[parsed.id] = parsed;
+          queryProgress.count += 1;
           break;
         case 'electron':
           var win = new BrowserWindow({
@@ -181,6 +197,7 @@ var PluginManager = function() {
           parsed._process = win;
 
           model.plugins[parsed.id] = parsed;
+          queryProgress.count += 1;
           break;
         }
 
@@ -208,6 +225,7 @@ var PluginManager = function() {
     if (lastQuery != query) {
       lastQuery = query;
       queryResults = [];
+      queryProgress.current = 0;
       process.nextTick(function () {
         pluginRequest({
           "method": "query",
@@ -215,6 +233,12 @@ var PluginManager = function() {
         });
       });
     }
+  };
+
+  this.clearQuery = function() {
+    lastQuery = null;
+    queryResults = [];
+    queryProgress.current = 0;
   };
 
   this.pluginAction = function(data) {

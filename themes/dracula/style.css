@@ -10,6 +10,26 @@ body {
   height: 80px;
 }
 
+.query-text-wrapper progress {
+  width: 100%;
+  height: 3px;
+  border: 0;
+  background: transparent;
+  vertical-align: top;
+
+  visibility: visible;
+  opacity: 1;
+}
+
+/*.query-text-wrapper progress.done {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}*/
+
+.query-text-wrapper progress::-webkit-progress-bar { background: transparent; }
+.query-text-wrapper progress::-webkit-progress-value { background: #bd93f9; }
+
 .query-text {
   display: block;
   width: 100%;

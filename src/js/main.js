@@ -18,6 +18,10 @@ var AppVm = (function() {
   };
   vm.init = function() {
     vm.queryResults = m.prop([]);
+    vm.progress = m.prop({
+      count: 0,
+      current: 0
+    });
   }
   return vm;
 }())
@@ -31,6 +35,12 @@ pluginManager.on('query-results', function(results) {
   AppVm.queryResults(results);
   m.redraw();
 });
+
+pluginManager.on('progress-update', function(progress) {
+  AppVm.progress(progress);
+  m.redraw();
+});
+
 
 function isScrolledIntoView(element, parent) {
   var elementTop    = element.getBoundingClientRect().top,
@@ -134,7 +144,12 @@ var App = {
         ctrl.selected(0);
       } else {
         AppVm.queryResults([]);
+        AppVm.progress({
+          count: 0,
+          current: 0
+        });
         ctrl.selected(0);
+        pluginManager.clearQuery();
       }
     };
 
@@ -233,10 +248,21 @@ var App = {
     // var begin = scrollTop / 57 | 0
   	// var end = begin + (AppVm.state.height / 57 | 0 + 3)
   	// var offset = scrollTop % 57
+    var progressValue = 0;
+    var progressClass = "";
+    var progress = AppVm.progress();
+    if (progress.count != 0) {
+      progressValue = Math.round(progress.current / progress.count * 100.0);
+
+      if (progressValue == 100) {
+        progressClass = "done";
+      }
+    }
 
     return <div config={App.config.bind(ctrl)}>
       <div class="query-text-wrapper">
         <input type="text" class="query-text mousetrap" onkeyup={ctrl.onQueryKeyUp} onblur={ctrl.onQueryBlur} oninput={ctrl.onQueryInput}/>
+        <progress max="100" value={progressValue} class={progressClass}></progress>
       </div>
 
       <div class="query-results" config={ctrl.queryResultsConfig.bind(ctrl)} onscroll={ctrl.onQueryResultsScroll}>
