@@ -14,11 +14,13 @@ Plugin.prototype.query = function query(query) {
   try {
     var answer = math.eval(query);
     if (typeof(answer) == "function") {
+      this.client.call("noqueryresults", null);
       return;
     }
 
     // don't care if the answer is only words
     if (/^[A-Za-z]+$/.test(answer)) {
+      this.client.call("noqueryresults", null);
       return;
     }
 
