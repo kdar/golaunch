@@ -10,6 +10,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
+	"unicode/utf16"
+	"runtime"
 
 	"github.com/mattn/go-ole"
 	"github.com/mattn/go-ole/oleutil"
@@ -19,6 +22,10 @@ import (
 // Possibly get filename description from exe
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms647003(v=vs.85).aspx
 
+func init() {
+	ole.CoInitializeEx(0, COINIT_SPEED_OVER_MEMORY)
+}
+
 type System struct {
 	oleShellObject *ole.IUnknown
 	wshell         *ole.IDispatch
@@ -26,7 +33,7 @@ type System struct {
 }
 
 func NewSystem() *System {
-	ole.CoInitializeEx(0, 0)
+	//ole.CoInitializeEx(0, COINIT_APARTMENTTHREADED | COINIT_SPEED_OVER_MEMORY)
 	oleShellObject, _ := oleutil.CreateObject("WScript.Shell")
 	wshell, _ := oleShellObject.QueryInterface(ole.IID_IDispatch)
 	return &System{
@@ -38,7 +45,6 @@ func NewSystem() *System {
 
 func (s *System) Close() {
 	s.wshell.Release()
-	ole.CoUninitialize()
 }
 
 func (s *System) AppIcon(path string) (image.Image, error) {
@@ -94,25 +100,71 @@ func (s *System) ResolveLink(path string) string {
 	return oleutil.MustGetProperty(idispatch, "TargetPath").ToString()
 }
 
+// ResolveMSILink finds the target for what are called Advertisment
+// Shortcuts. These are special shortcuts installed with windows
+// installer MSI that don't follow the conventions of regular shortcuts.
+// I had to do some funky things with CoInitialize because this code
+// seems to only work with apartment threads, while the rest of the
+// code in here fails with apartment threads.
+func (s *System) ResolveMSILink(path string) string {
+	ch := make(chan string)
+  go func() {
+		// lock the thread so we can use apartment threads
+		runtime.LockOSThread()
+	  ole.CoInitializeEx(0, COINIT_APARTMENTTHREADED | COINIT_SPEED_OVER_MEMORY)
+		defer ole.CoUninitialize()
+
+		path, _ = filepath.Abs(path)
+
+		product := make([]uint16, 39)
+		feature := make([]uint16, 39)
+		component := make([]uint16, 39)
+		_, err := MsiGetShortcutTarget(syscall.StringToUTF16Ptr(path), &product[0], &feature[0], &component[0])
+		if err != nil {
+			log.Println(err)
+			ch <- ""
+			return
+		}
+
+		dwlen := syscall.MAX_PATH
+		target := make([]uint16, syscall.MAX_PATH)
+		_, err = MsiGetComponentPath(&product[0], &component[0], &target[0], &dwlen)
+		if err != nil {
+			log.Println(err)
+			ch <- ""
+			return
+		}
+
+		ch <- string(utf16.Decode(target[:dwlen]))
+	}()
+
+	return <-ch
+}
+
 func (s *System) RunProgram(path string, args string, dir string, user string) error {
 	if filepath.Ext(path) == ".lnk" {
 		lcs := oleutil.MustCallMethod(s.wshell, "CreateShortcut", path).ToIDispatch()
-		lpath := oleutil.MustGetProperty(lcs, "TargetPath").ToString()
 
 		// can possible call the method Count and Item to retrieve individual arg items
 		// https://msdn.microsoft.com/en-us/library/ss1ysb2a(v=vs.84).aspx
 		largs := oleutil.MustGetProperty(lcs, "Arguments").ToString()
 		lwd := oleutil.MustGetProperty(lcs, "WorkingDirectory").ToString()
 
-		path = lpath
-		// some lnk files seem to have no TargetPath, such as the windows games,
-		// such as Minesweeper. I just grab its icon path and use that as the
-		// executable,
+    // attempt to see if it's a MSI shortcut first
+		path = s.ResolveMSILink(path)
 		if path == "" {
-			path = oleutil.MustGetProperty(lcs, "IconLocation").ToString()
-			index := strings.LastIndex(path, ",")
-			if index >= 0 {
-				path = path[:index]
+			// just try to get the target path if not a MSI shortcut
+			path = oleutil.MustGetProperty(lcs, "TargetPath").ToString()
+			if path == "" {
+				// I'm not sure if this is the correct thing to do, but games
+				// like Minesweeper aren't MSI shortcuts and they have no
+				// TargetPath. The only thing I can figure out is the exe
+				// is located in the IconLocation.
+				path = oleutil.MustGetProperty(lcs, "IconLocation").ToString()
+				index := strings.LastIndex(path, ",")
+				if index >= 0 {
+					path = path[:index]
+				}
 			}
 		}
 

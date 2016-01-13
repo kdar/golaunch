@@ -25,6 +25,13 @@ const (
 )
 
 const (
+	COINIT_APARTMENTTHREADED  = 0x2
+  COINIT_MULTITHREADED      = 0x0
+  COINIT_DISABLE_OLE1DDE    = 0x4
+  COINIT_SPEED_OVER_MEMORY  = 0x8
+)
+
+const (
 	EDIT       = "edit"
 	EXPLORE    = "explore"
 	OPEN       = "open"
@@ -69,5 +76,7 @@ func ShellExecute(action string, path string, param string, directory string) er
 	return nil
 }
 
-//// go:generate go run $GOROOT/src/syscall/mksyscall_windows.go -output zsyscall_windows.go syscall_windows.go
+//go:generate go run $GOROOT/src/syscall/mksyscall_windows.go -output zsyscall_windows.go syscall_windows.go
 //// sys shellExecute(hwnd uintptr, lpOperation *uint16, lpFile *uint16, lpParameters *uint16, lpDirectory *uint16, nShowCmd int) (h uintptr, err error) = shell32.ShellExecuteW
+//sys MsiGetShortcutTarget(szShortcutTarget *uint16, szProductCode *uint16, szFeatureId *uint16, szComponentCode *uint16) (ret int, err error) [failretval!=0] = msi.MsiGetShortcutTargetW
+//sys MsiGetComponentPath(szProduct *uint16, szComponent *uint16, lpPathBuf *uint16, pcchBuf *int) (ret int, err error) [failretval>32] = msi.MsiGetComponentPathW

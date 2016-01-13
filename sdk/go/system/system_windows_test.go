@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -15,6 +16,14 @@ func TestResolveLink(t *testing.T) {
 	path := sys.ResolveLink("testdata/Pidgin.lnk")
 
 	a.So(path, should.Equal, "D:\\Program Files (x86)\\Pidgin\\pidgin.exe")
+}
+
+func TestResolveMSILink(t *testing.T) {
+	//a := assertions.New(t)
+
+	sys := NewSystem()
+	path := sys.ResolveMSILink("testdata\\Minesweeper.lnk")
+	fmt.Println(path)
 }
 
 func TestResolveLinkConcurrent(t *testing.T) {
@@ -35,12 +44,12 @@ func TestResolveLinkConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
-func TestGetAppIcon(t *testing.T) {
-	a := assertions.New(t)
-
-	sys := NewSystem()
-	img, err := sys.GetAppIcon("testdata/Pidgin.lnk")
-
-	a.So(img, should.NotBeEmpty)
-	a.So(err, should.BeNil)
-}
+// func TestGetAppIcon(t *testing.T) {
+// 	a := assertions.New(t)
+//
+// 	sys := NewSystem()
+// 	img, err := sys.GetAppIcon("testdata/Pidgin.lnk")
+//
+// 	a.So(img, should.NotBeEmpty)
+// 	a.So(err, should.BeNil)
+// }
