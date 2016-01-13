@@ -256,6 +256,8 @@ var App = {
 
       if (progressValue == 100) {
         progressClass = "done";
+      } else if (progressValue < 100) {
+        progressClass = "working";
       }
     }
 

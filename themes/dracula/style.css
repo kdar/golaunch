@@ -17,9 +17,14 @@ body {
   background: transparent;
   vertical-align: top;
 
+  /*visibility: hidden;
+  opacity: 0;*/
+}
+
+/*.query-text-wrapper progress.working {
   visibility: visible;
   opacity: 1;
-}
+}*/
 
 /*.query-text-wrapper progress.done {
   visibility: hidden;
