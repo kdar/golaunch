@@ -90,15 +90,14 @@ app.on('ready', function() {
     pluginManager.shutdown();
   });
 
-  // const ipcMain = require('electron').ipcMain;
-  // ipcMain.on('asynchronous-message', function(event, arg) {
-  //   console.log(arg);
-  // });
   // const win = new BrowserWindow({
-	// 	show: false
+	// 	show: true,
+  //   frame: false,
+  //   transparent: true,
+  //   width: 500,
+  //   height: 400
 	// });
-	// win.loadURL(`file://${__dirname}/../plugins/golaunch-testplugin/index.html`);
-  // console.log(win.id);
+	// win.loadURL(`file://${__dirname}/test.html`);
 });
 
 app.on('will-quit', function() {

@@ -202,12 +202,14 @@ var App = {
             return;
           }
 
-          ripple(child, e.pageX, e.pageY);
+          // ripple(child, e.pageX, e.pageY);
 
           var i = 0;
           while ((child = child.previousSibling) != null)
             i++;
 
+          // this is not async. this will block the renderer:
+          // https://github.com/atom/electron/issues/1854
           var cm = AppVm.queryResults()[i].contextmenu;
           if (cm) {
             contextmenu.clear();

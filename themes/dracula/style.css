@@ -122,7 +122,7 @@ body {
   background-color: #FF7BCA;
 }
 
-.ink {
+/*.ink {
 	display: block; position: absolute;
 	background: #6272a4;
 	border-radius: 100%;
@@ -135,4 +135,4 @@ body {
 
 @keyframes ripple {
 	100% {opacity: 0; transform: scale(2.5);}
-}
+}*/
