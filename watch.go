@@ -101,7 +101,7 @@ func main() {
 	w := NewWatcher()
 	w.Add(Target{
 		Dir:   "src",
-		Globs: []string{"*.js", "*.html"},
+		Globs: []string{"*.js", "*.html", "*.css"},
 		Callback: func(file string) {
 			cmd := exec.Command("gobble", "build", "-f", "build")
 			cmd.Stdin = os.Stdin
