@@ -13,10 +13,10 @@ global["themeManager"] = new themes.ThemeManager();
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
 
-process.on('uncaughtException', function uncaughtException(err) {
-  console.error(err.stack);
-  app.quit();
-})
+// process.on('uncaughtException', function uncaughtException(err) {
+//   console.error(err.stack);
+//   app.quit();
+// })
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -89,15 +89,6 @@ app.on('ready', function() {
 
     pluginManager.shutdown();
   });
-
-  // const win = new BrowserWindow({
-	// 	show: true,
-  //   frame: false,
-  //   transparent: true,
-  //   width: 500,
-  //   height: 400
-	// });
-	// win.loadURL(`file://${__dirname}/test.html`);
 });
 
 app.on('will-quit', function() {

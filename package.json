@@ -15,6 +15,8 @@
     "mithril": "git://github.com/lhorie/mithril.js.git#next",
     "mousetrap": "^1.5.3",
     "npm": "^3.5.2",
+    "open": "0.0.5",
+    "semantic-ui-css": "^2.1.8",
     "toml": "^2.3.0"
   },
   "devDependencies": {

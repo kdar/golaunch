@@ -1,0 +1,39 @@
+#settings {
+  height: 100%;
+}
+
+#settings .ui.pushable {
+  overflow: hidden;
+}
+
+#settings .pusher {
+  margin-right: 200px !important;
+  overflow-y: auto!important;
+  height: 100%;
+
+  /*put a border on the bottom the size of the footer*/
+  box-sizing: border-box;
+  border-bottom: 60px solid white;
+}
+
+#settings .ui.left.sidebar, .ui.right.sidebar {
+  width: 200px;
+}
+
+#settings .ui.visible.left.sidebar~.fixed, .ui.visible.left.sidebar~.pusher {
+  -webkit-transform: translate3d(200px,0,0);
+  transform: translate3d(200px,0,0);
+}
+
+#settings .ui.segment {
+  margin-top: 0;
+}
+
+#settings .ui.footer {
+  z-index: 3;
+  position: fixed;
+  height: 60px;
+  bottom: 0;
+  width: 100%;
+  padding-right: 10px;
+}

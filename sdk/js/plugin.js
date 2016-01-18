@@ -10,7 +10,6 @@ Client.prototype.call = function call(method, params) {
   //   'method': method,
   //   'params': params
   // });
-  console.log("caca: plugin-" + this.windowID);
   ipcRenderer.send("plugin-" + this.windowID, {
     'method': method,
     'params': params

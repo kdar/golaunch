@@ -12,36 +12,45 @@ var Plugin = function() {
   p.commands = {
     "restart": {
       title: "Restart GoLaunch",
-      subtitle: "Restarts the application immediately."
+      subtitle: "Restarts the application immediately.",
+      icon: "restart.png"
+    },
+    "settings": {
+      title: "GoLaunch Settings",
+      subtitle: "Configure GoLaunch and plugins.",
+      icon: "settings.png"
     },
     "quit": {
       title: "Quit GoLaunch",
-      subtitle: "Quits the program for good!"
+      subtitle: "Quits the program for good!",
+      icon: "exit.png"
     },
     "exit": {
       title: "Exit GoLaunch",
-      subtitle: "Exits the program for good!"
+      subtitle: "Exits the program for good!",
+      icon: "exit.png"
     }
   };
-
-  sdk.imageFileToEmbed(path.join(__dirname, "images", "exit.png")).then(function(img) {
-    p.commands["quit"].icon = img;
-    p.commands["exit"].icon = img;
-  }, function(err) {
-    console.error(err);
-  });
-
-  sdk.imageFileToEmbed(path.join(__dirname, "images", "restart.png")).then(function(img) {
-    p.commands["restart"].icon = img;
-  }, function(err) {
-    console.error(err);
-  });
 };
 
 Plugin.prototype.__proto__ = events.EventEmitter.prototype;
 
 Plugin.prototype.init = function init(metadata) {
+  var p = this;
   this.metadata = metadata;
+
+  for (var key in p.commands) {
+    if (p.commands[key].icon) {
+      !function outer(key) {
+        sdk.imageFileToEmbed(path.join(__dirname, "images", p.commands[key].icon)).then(function(img) {
+          p.commands[key].icon = img;
+        }, function(err) {
+          p.client.call("log", err);
+          console.error(err);
+        });
+      }(key);
+    }
+  }
 };
 
 Plugin.prototype.query = function query(query) {
@@ -88,6 +97,8 @@ Plugin.prototype.action = function action(action) {
     this.client.call("eval", "("+restart.toString()+")()");
   } else if (action.queryResult.data == "quit" || action.queryResult.data == "exit") {
     this.client.call("eval", "app.quit();");
+  } else if (action.queryResult.data == "settings") {
+    this.client.call("opensettings", null);
   }
 };
 

@@ -49,6 +49,23 @@ var PluginManager = function() {
       console.log(data.params);
       break;
 
+    case 'opensettings':
+      if (!self.settingsWin) {
+        self.settingsWin = new BrowserWindow({
+          show: false,
+          //frame: false,
+          //transparent: true,
+          width: 800,
+          height: 550
+        });
+      }
+
+      self.settingsWin.loadURL(`file://${__dirname}/pages/settings/settings.html`);
+      self.settingsWin.show();
+
+      //self.settingsWin.setMenu(null);
+      break;
+
     case 'noqueryresults':
       queryProgress.current += 1;
       self.emit('progress-update', queryProgress);
@@ -181,6 +198,26 @@ var PluginManager = function() {
           var win = new BrowserWindow({
         		show: false
         	});
+
+          // win.on('close', function() {
+          //   console.log("close event", arguments);
+          // });
+          // win.on('closed', function() {
+          //   console.log("closed event", arguments);
+          // });
+          // win.on('unresponsive', function() {
+          //   console.log("unresponsive event", arguments);
+          // });
+          // win.webContents.on('did-fail-load', function() {
+          //   console.log("did-fail-load event", arguments);
+          // });
+          // win.webContents.on('crashed', function() {
+          //   console.log("crashed event", arguments);
+          // });
+          // win.webContents.on('plugin-crashed', function() {
+          //   console.log("plugin-crashed event", arguments);
+          // });
+
         	win.loadURL(`file://` + path.join(dirPath, parsed.main));
 
           ipcMain.on("plugin-" + win.id, function(event, arg) {
