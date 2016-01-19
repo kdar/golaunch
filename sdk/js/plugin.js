@@ -1,24 +1,26 @@
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
 
-function Client() {
-  this.windowID = electron.remote.getCurrentWindow().id;
-};
+var windowID = electron.remote.getCurrentWindow().id;
+
+process.on('uncaughtException', function uncaughtException(err) {
+  ipcRenderer.send("plugin-error-" + windowID, err.stack);
+});
+
+function Client() {};
 
 Client.prototype.call = function call(method, params) {
   // process.send({
   //   'method': method,
   //   'params': params
   // });
-  ipcRenderer.send("plugin-" + this.windowID, {
+  ipcRenderer.send("plugin-" + windowID, {
     'method': method,
     'params': params
   });
 };
 
-function Server() {
-  this.windowID = electron.remote.getCurrentWindow().id;
-};
+function Server() {};
 
 Server.prototype.register = function register(plugin) {
   this.p = plugin;
@@ -39,7 +41,7 @@ Server.prototype.serve = function serve() {
   //     break;
 	// 	}
   // });
-  ipcRenderer.on("plugin-" + this.windowID, function(event, m) {
+  ipcRenderer.on("plugin-" + windowID, function(event, m) {
     switch (m.method) {
 		case "init":
 			s.p.init(m.params)

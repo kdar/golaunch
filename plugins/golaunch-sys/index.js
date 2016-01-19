@@ -1,8 +1,8 @@
+var plugin = require('../../sdk/js/plugin');
 var events = require('events');
 var fuzzy = require('../../sdk/js/fuzzy');
 var sdk = require('../../sdk/js/sdk');
 var path = require('path');
-var plugin = require('../../sdk/js/plugin');
 
 var Plugin = function() {
   var p = this;

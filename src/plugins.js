@@ -155,16 +155,19 @@ var PluginManager = function() {
           plugin.stdin.setEncoding('utf8');
           plugin.stderr.setEncoding('utf8');
 
-          // plugin.on('error', function() {
-          //   console.log("ui:", arguments);
-          // });
-          //
+          plugin.on('exit', function() {
+            console.log("exit:", arguments);
+          });
+          plugin.on('error', function() {
+            console.log("error:", arguments);
+          });
+
           plugin.stdout.on('data', function(data) {
             pluginData(JSON.parse(data));
           });
 
           plugin.stderr.on('data', function(data) {
-            process.stdout.write("backend: " + data);
+            console.log("plugin error:", data);
           });
 
           plugin.stdin.write(JSON.stringify({
@@ -222,6 +225,10 @@ var PluginManager = function() {
 
           ipcMain.on("plugin-" + win.id, function(event, arg) {
             pluginData(arg);
+          });
+
+          ipcMain.on("plugin-error-" + win.id, function(event, arg) {
+            console.log("plugin error:", arg);
           });
 
           win.webContents.once('did-finish-load', function() {

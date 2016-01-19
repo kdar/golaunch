@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	sdk "golaunch/sdk/go"
 	"golaunch/sdk/go/fuzzy"
 	"golaunch/sdk/go/system"
@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
-	"time"
+	// "time"
 
 	"github.com/MichaelTJones/walk"
 	"github.com/boltdb/bolt"
@@ -160,7 +160,7 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 	// FIXME: not case sensitive right now
 	query = strings.ToLower(query)
 
-	start := time.Now()
+	// start := time.Now()
 
 	pwd, _ := osext.ExecutableFolder()
 
@@ -272,7 +272,7 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 		results = results[:c.cfg.MaxResults]
 	}
 
-	fmt.Fprintf(os.Stderr, "query elasped time: %v\n", time.Now().Sub(start))
+	//fmt.Fprintf(os.Stderr, "query elasped time: %v\n", time.Now().Sub(start))
 
 	return results
 }
@@ -363,7 +363,7 @@ func (c *Catalog) watch() {
 			if filepath.HasPrefix(ei.Path(), source.Path) {
 				if source.containsExt(filepath.Ext(ei.Path())) {
 					doupdate = true
-					log.Printf("programs: fs event: %v", ei)
+					//log.Printf("programs: fs event: %v", ei)
 					break
 				}
 			}
@@ -405,7 +405,7 @@ func (c *Catalog) IsEmpty() bool {
 func (c *Catalog) Index() {
 	select {
 	case v := <-c.indexing:
-		log.Println("already indexing.")
+		//log.Println("already indexing.")
 		c.indexing <- v
 		return
 	default:
@@ -413,11 +413,11 @@ func (c *Catalog) Index() {
 
 	c.indexing <- struct{}{}
 
-	log.Println("started indexing...")
+	//log.Println("started indexing...")
 
 	c.db.NoSync = true
 
-	start := time.Now()
+	//start := time.Now()
 	for _, source := range c.cfg.Sources {
 		err := walk.Walk(os.ExpandEnv(source.Path), func(path string, f os.FileInfo, err error) error {
 			return c.walkFn(&source, path, f, err)
@@ -426,7 +426,7 @@ func (c *Catalog) Index() {
 			log.Println(err)
 		}
 	}
-	log.Printf("indexing elasped time: %v\n", time.Now().Sub(start))
+	//log.Printf("indexing elasped time: %v\n", time.Now().Sub(start))
 
 	c.db.NoSync = false
 

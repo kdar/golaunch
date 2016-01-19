@@ -38,7 +38,7 @@ func (p *Plugin) Query(q string) {
 }
 
 func (p *Plugin) Action(a sdk.Action) {
-	log.Print("action for helloworld pressed")
+	//log.Print("action for helloworld pressed")
 }
 
 func main() {
