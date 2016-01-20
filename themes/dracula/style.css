@@ -1,8 +1,8 @@
-body {
+body.launcher {
   background-color: #282A36;
 }
 
-.query-text-wrapper {
+body.launcher .query-text-wrapper {
   background-color: #282A36;
   -webkit-app-region: drag;
   padding: 10px 10px 0 10px;
@@ -10,7 +10,7 @@ body {
   height: 80px;
 }
 
-.query-text-wrapper progress {
+body.launcher .query-text-wrapper progress {
   width: 100%;
   height: 3px;
   border: 0;
@@ -21,21 +21,21 @@ body {
   opacity: 0;*/
 }
 
-/*.query-text-wrapper progress.working {
+/*body.launcher .query-text-wrapper progress.working {
   visibility: visible;
   opacity: 1;
 }*/
 
-/*.query-text-wrapper progress.done {
+/*body.launcher .query-text-wrapper progress.done {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s 1s, opacity 1s linear;
 }*/
 
-.query-text-wrapper progress::-webkit-progress-bar { background: transparent; }
+body.launcher .query-text-wrapper progress::-webkit-progress-bar { background: transparent; }
 .query-text-wrapper progress::-webkit-progress-value { background: #bd93f9; }
 
-.query-text {
+body.launcher .query-text {
   display: block;
   width: 100%;
   height: 60px;
@@ -48,12 +48,12 @@ body {
   padding-left: 10px;
 }
 
-.query-text:focus {
+body.launcher .query-text:focus {
   border: 0;
   outline: none;
 }
 
-.query-results {
+body.launcher .query-results {
   padding: 0 10px 10px 10px;
   display: block;
   background-color: #282A36;
@@ -62,13 +62,13 @@ body {
   max-height: 400px;
 }
 
-.query-results ul  {
+body.launcher .query-results ul  {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.query-results ul li {
+body.launcher .query-results ul li {
   position: relative;
   overflow: hidden;
   margin: 0;
@@ -77,59 +77,59 @@ body {
   min-height: 40px;
 }
 
-.query-results ul li img {
+body.launcher .query-results ul li img {
   float: left;
   padding: 5px 10px 10px 5px;
   height: 50px;
 }
 
-.query-results ul li.selected {
+body.launcher .query-results ul li.selected {
   background-color: #44475A;
 }
 
-.query-results ul li h1 {
+body.launcher .query-results ul li h1 {
   font-size: 16px;
   color: #f5f5f5;
   margin: 0;
 }
 
-.query-results ul li.selected h1 {
+body.launcher .query-results ul li.selected h1 {
   color: #f5f5f5;
 }
 
-.query-results ul li h2 {
+body.launcher .query-results ul li h2 {
   font-size: 14px;
   color: #6272a4;
   margin: 0;
 }
 
-.query-results ul li.selected h2 {
+body.launcher .query-results ul li.selected h2 {
   color: #bd93f9;
 }
 
-.query-results::-webkit-scrollbar {
+body.launcher .query-results::-webkit-scrollbar {
   width: 12px;
 }
 
-.query-results::-webkit-scrollbar-track {
+body.launcher .query-results::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
   border-radius: 10px;
 }
 
-.query-results::-webkit-scrollbar-thumb {
+body.launcher .query-results::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
   background-color: #FF7BCA;
 }
 
-/*.ink {
+/*body.launcher .ink {
 	display: block; position: absolute;
 	background: #6272a4;
 	border-radius: 100%;
 	transform: scale(0);
 }
 
-.ink.animate {
+body.launcher .ink.animate {
   animation: ripple 0.65s linear;
 }
 

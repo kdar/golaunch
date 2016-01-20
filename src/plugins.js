@@ -58,9 +58,15 @@ var PluginManager = function() {
           width: 800,
           height: 550
         });
-      }
 
-      self.settingsWin.loadURL(`file://${__dirname}/pages/settings/settings.html`);
+        self.settingsWin.on('close', function(event) {
+          event.preventDefault();
+          self.settingsWin.hide();
+        });
+
+        self.settingsWin.loadURL(`file://${__dirname}/pages/settings/settings.html`);
+      }
+      
       self.settingsWin.show();
 
       //self.settingsWin.setMenu(null);

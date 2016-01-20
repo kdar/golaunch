@@ -1,24 +1,31 @@
-.hiding {
+* {
+  cursor: default;
+  -webkit-user-select: none;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+}
+hr, html, label {
+  overflow: hidden;
+}
+body, html {
+  height: 100%;
+}
+
+body.launcher .hiding {
   text-overflow: ellipsis;
 }
 
-.query-results ul li h2 {
+body.launcher .query-results ul li h2 {
   overflow: hidden;
   text-overflow: initial;
   white-space: nowrap;
 }
 
-html {
-    width: 100%;
-}
-hr, html, label {
-    overflow: hidden;
-}
-body, html {
-    height: 100%;
-}
-
-body {
+body.launcher {
   padding: 0;
   margin: 0;
   font-family: system,-apple-system,".SFNSDisplay-Regular","Helvetica Neue",Helvetica,"Segoe UI",sans-serif;
@@ -28,30 +35,38 @@ body {
   background-color: transparent;
 }
 
-* {
-  cursor: default;
-  -webkit-user-select: none;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+body.launcher h1,
+body.launcher h2,
+body.launcher h3,
+body.launcher h4,
+body.launcher h5,
+body.launcher h6 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  overflow: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    font-weight: 500;
-    overflow: hidden;
+body.launcher h1 {
+  margin: .67em 0;
+  font-size: 36px;
 }
 
-h1 {
-    margin: .67em 0;
-    font-size: 36px;
+body.launcher h2 {
+  font-size: 30px;
 }
 
-h2 {
-    font-size: 30px;
-}
-
-.list-group *, .nav-group-item, h1, h2, h3, h4, h5, h6, label, td, th {
-    white-space: nowrap;
-    text-overflow: ellipsis;
+body.launcher .list-group *,
+body.launcher .nav-group-item,
+body.launcher h1,
+body.launcher h2,
+body.launcher h3,
+body.launcher h4,
+body.launcher h5,
+body.launcher h6,
+body.launcher label,
+body.launcher td,
+body.launcher th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
