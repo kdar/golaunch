@@ -23,7 +23,7 @@
     "babel-cli": "^6.4.0",
     "babel-plugin-mjsx": "^1.0.3",
     "electron-packager": "^5.2.0",
-    "electron-prebuilt": "^0.36.3",
+    "electron-prebuilt": "^0.36.5",
     "electron-rebuild": "^1.0.2",
     "gobble": "^0.10.2",
     "gobble-babel": "^5.5.8"
