@@ -42,9 +42,6 @@ if (shouldQuit) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
-  pluginManager.init();
-  themeManager.init();
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
@@ -63,6 +60,9 @@ app.on('ready', function() {
       'overlayScrollbars': process.platform === 'win32'
     }
   });
+
+  pluginManager.init();
+  themeManager.init();
 
   //mainWindow.setMenu(null);
 

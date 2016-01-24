@@ -1,8 +1,69 @@
-body.launcher {
+#launcher * {
+  cursor: default;
+  -webkit-user-select: none;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#launcher .hiding {
+  text-overflow: ellipsis;
+}
+
+#launcher .query-results ul li h2 {
+  overflow: hidden;
+  text-overflow: initial;
+  white-space: nowrap;
+}
+
+#launcher {
+  font-family: system,-apple-system,".SFNSDisplay-Regular","Helvetica Neue",Helvetica,"Segoe UI",sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+}
+
+#launcher h1,
+#launcher h2,
+#launcher h3,
+#launcher h4,
+#launcher h5,
+#launcher h6 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+#launcher h1 {
+  margin: .67em 0;
+  font-size: 36px;
+}
+
+#launcher h2 {
+  font-size: 30px;
+}
+
+#launcher .list-group *,
+#launcher .nav-group-item,
+#launcher h1,
+#launcher h2,
+#launcher h3,
+#launcher h4,
+#launcher h5,
+#launcher h6,
+#launcher label,
+#launcher td,
+#launcher th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+#launcher {
   background-color: #282A36;
 }
 
-body.launcher .query-text-wrapper {
+#launcher .query-text-wrapper {
   background-color: #282A36;
   -webkit-app-region: drag;
   padding: 10px 10px 0 10px;
@@ -10,7 +71,7 @@ body.launcher .query-text-wrapper {
   height: 80px;
 }
 
-body.launcher .query-text-wrapper progress {
+#launcher .query-text-wrapper progress {
   width: 100%;
   height: 3px;
   border: 0;
@@ -21,21 +82,21 @@ body.launcher .query-text-wrapper progress {
   opacity: 0;*/
 }
 
-/*body.launcher .query-text-wrapper progress.working {
+/*#launcher .query-text-wrapper progress.working {
   visibility: visible;
   opacity: 1;
 }*/
 
-/*body.launcher .query-text-wrapper progress.done {
+/*#launcher .query-text-wrapper progress.done {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s 1s, opacity 1s linear;
 }*/
 
-body.launcher .query-text-wrapper progress::-webkit-progress-bar { background: transparent; }
+#launcher .query-text-wrapper progress::-webkit-progress-bar { background: transparent; }
 .query-text-wrapper progress::-webkit-progress-value { background: #bd93f9; }
 
-body.launcher .query-text {
+#launcher .query-text {
   display: block;
   width: 100%;
   height: 60px;
@@ -48,12 +109,12 @@ body.launcher .query-text {
   padding-left: 10px;
 }
 
-body.launcher .query-text:focus {
+#launcher .query-text:focus {
   border: 0;
   outline: none;
 }
 
-body.launcher .query-results {
+#launcher .query-results {
   padding: 0 10px 10px 10px;
   display: block;
   background-color: #282A36;
@@ -62,13 +123,13 @@ body.launcher .query-results {
   max-height: 400px;
 }
 
-body.launcher .query-results ul  {
+#launcher .query-results ul  {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-body.launcher .query-results ul li {
+#launcher .query-results ul li {
   position: relative;
   overflow: hidden;
   margin: 0;
@@ -77,59 +138,59 @@ body.launcher .query-results ul li {
   min-height: 40px;
 }
 
-body.launcher .query-results ul li img {
+#launcher .query-results ul li img {
   float: left;
   padding: 5px 10px 10px 5px;
   height: 50px;
 }
 
-body.launcher .query-results ul li.selected {
+#launcher .query-results ul li.selected {
   background-color: #44475A;
 }
 
-body.launcher .query-results ul li h1 {
+#launcher .query-results ul li h1 {
   font-size: 16px;
   color: #f5f5f5;
   margin: 0;
 }
 
-body.launcher .query-results ul li.selected h1 {
+#launcher .query-results ul li.selected h1 {
   color: #f5f5f5;
 }
 
-body.launcher .query-results ul li h2 {
+#launcher .query-results ul li h2 {
   font-size: 14px;
   color: #6272a4;
   margin: 0;
 }
 
-body.launcher .query-results ul li.selected h2 {
+#launcher .query-results ul li.selected h2 {
   color: #bd93f9;
 }
 
-body.launcher .query-results::-webkit-scrollbar {
+#launcher .query-results::-webkit-scrollbar {
   width: 12px;
 }
 
-body.launcher .query-results::-webkit-scrollbar-track {
+#launcher .query-results::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
   border-radius: 10px;
 }
 
-body.launcher .query-results::-webkit-scrollbar-thumb {
+#launcher .query-results::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
   background-color: #FF7BCA;
 }
 
-/*body.launcher .ink {
+/*#launcher .ink {
 	display: block; position: absolute;
 	background: #6272a4;
 	border-radius: 100%;
 	transform: scale(0);
 }
 
-body.launcher .ink.animate {
+#launcher .ink.animate {
   animation: ripple 0.65s linear;
 }
 

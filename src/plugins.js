@@ -59,17 +59,16 @@ var PluginManager = function() {
           height: 550
         });
 
-        self.settingsWin.on('close', function(event) {
-          event.preventDefault();
-          self.settingsWin.hide();
+        self.settingsWin.on('close', function() {
+          self.settingsWin = null;
         });
 
         self.settingsWin.loadURL(`file://${__dirname}/pages/settings/settings.html`);
-      }
-      
-      self.settingsWin.show();
+        self.settingsWin.show();
 
-      //self.settingsWin.setMenu(null);
+        //self.settingsWin.setMenu(null);
+      }
+
       break;
 
     case 'noqueryresults':
@@ -256,7 +255,8 @@ var PluginManager = function() {
     });
   };
 
-  this.init = function() {
+  this.init = function(cfg) {
+    self.cfg = cfg;
     var pluginsDir = path.join(__dirname, '../', 'plugins');
     fs.readdir(pluginsDir, function(err, files) {
       for (var x = 0; x < files.length; x++) {
