@@ -43,8 +43,8 @@ type Config struct {
 	ScanOnStartup        bool          `toml:"scan_on_startup"`
 	ScanOnStartupIfEmpty bool          `toml:"scan_on_startup_if_empty"`
 	ScanWhenIdle         bool          `toml:"scan_when_idle"`
-	MaxScansPerRun       int           `toml:"max_scans_per_run"`
-	Sources              []Source      `toml:"sources"`
+	// MaxScansPerRun       int           `toml:"max_scans_per_run"`
+	Sources []Source `toml:"sources"`
 }
 
 type Plugin struct {
@@ -117,9 +117,9 @@ func (p *Plugin) Init(m sdk.Metadata) {
 				catalog.Index()
 				scanCount += 1
 
-				if scanCount >= cfg.MaxScansPerRun {
-					return
-				}
+				// if cfg.MaxScansPerRun > 0 && scanCount >= cfg.MaxScansPerRun {
+				// 	return
+				// }
 			}
 		}()
 	}
