@@ -14,7 +14,7 @@ Client.prototype.call = function call(method, params) {
   //   'method': method,
   //   'params': params
   // });
-  ipcRenderer.send("plugin-" + windowID, {
+  ipcRenderer.send("plugin-data-" + windowID, {
     'method': method,
     'params': params
   });
@@ -41,7 +41,7 @@ Server.prototype.serve = function serve() {
   //     break;
 	// 	}
   // });
-  ipcRenderer.on("plugin-" + windowID, function(event, m) {
+  ipcRenderer.on("plugin-data-" + windowID, function(event, m) {
     switch (m.method) {
 		case "init":
 			s.p.init(m.params)

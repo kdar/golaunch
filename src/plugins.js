@@ -125,7 +125,7 @@ var PluginManager = function() {
       break;
     case 'electron':
       var _process = plugin._process;
-      _process.webContents.send("plugin-" + _process.id, data);
+      _process.webContents.send("plugin-data-" + _process.id, data);
     }
   };
 
@@ -228,7 +228,7 @@ var PluginManager = function() {
 
         	win.loadURL(`file://` + path.join(dirPath, parsed.main));
 
-          ipcMain.on("plugin-" + win.id, function(event, arg) {
+          ipcMain.on("plugin-data-" + win.id, function(event, arg) {
             pluginData(arg);
           });
 
@@ -237,7 +237,7 @@ var PluginManager = function() {
           });
 
           win.webContents.once('did-finish-load', function() {
-            win.webContents.send("plugin-" + win.id, {
+            win.webContents.send("plugin-data-" + win.id, {
               method: "init",
               params: parsed
             });
