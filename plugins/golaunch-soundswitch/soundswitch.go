@@ -89,11 +89,11 @@ func (p *Plugin) Query(q string) {
 			return
 		}
 
-		p.client.Call("queryresults", results)
+		p.client.Call("queryResults", results)
 		return
 	}
 
-	p.client.Call("noqueryresults", nil)
+	p.client.Call("noQueryResults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {

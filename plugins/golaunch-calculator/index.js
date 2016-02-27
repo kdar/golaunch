@@ -14,18 +14,18 @@ Plugin.prototype.query = function query(query) {
   try {
     var answer = math.eval(query);
     if (typeof(answer) == "function") {
-      this.client.call("noqueryresults", null);
+      this.client.call("noQueryResults", null);
       return;
     }
 
     // don't care if the answer is only words
     if (/^[A-Za-z]+$/.test(answer)) {
-      this.client.call("noqueryresults", null);
+      this.client.call("noQueryResults", null);
       return;
     }
 
     //console.dir(answer);
-    this.client.call("queryresults", [{
+    this.client.call("queryResults", [{
       icon: this.metadata._icon,
       title: "" + answer,
       subtitle: "Copy this answer to clipboard",
@@ -37,7 +37,7 @@ Plugin.prototype.query = function query(query) {
     return;
   } catch (e) {}
 
-  this.client.call("noqueryresults", null);
+  this.client.call("noQueryResults", null);
 };
 
 Plugin.prototype.action = function action(action) {

@@ -49,7 +49,7 @@ var PluginManager = function() {
       console.log(data.params);
       break;
 
-    case 'opensettings':
+    case 'openSettings':
       if (!self.settingsWin) {
         self.settingsWin = new BrowserWindow({
           show: false,
@@ -71,12 +71,12 @@ var PluginManager = function() {
 
       break;
 
-    case 'noqueryresults':
+    case 'noQueryResults':
       queryProgress.current += 1;
       self.emit('progress-update', queryProgress);
       break;
 
-    case 'queryresults': // just query results
+    case 'queryResults': // just query results
       queryProgress.current += 1;
       self.emit('progress-update', queryProgress);
 

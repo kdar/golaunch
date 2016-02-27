@@ -73,11 +73,11 @@ Plugin.prototype.query = function query(query) {
   }
 
   if (results.length > 0) {
-    p.client.call("queryresults", results);
+    p.client.call("queryResults", results);
     return;
   }
 
-  this.client.call("noqueryresults", null);
+  this.client.call("noQueryResults", null);
 };
 
 Plugin.prototype.action = function action(action) {
@@ -98,7 +98,7 @@ Plugin.prototype.action = function action(action) {
   } else if (action.queryResult.data == "quit" || action.queryResult.data == "exit") {
     this.client.call("eval", "app.quit();");
   } else if (action.queryResult.data == "settings") {
-    this.client.call("opensettings", null);
+    this.client.call("openSettings", null);
   }
 };
 

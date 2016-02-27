@@ -133,11 +133,11 @@ func (p *Plugin) Init(m sdk.Metadata) {
 func (p *Plugin) Query(q string) {
 	results := p.catalog.Query(q)
 	if results != nil && len(results) > 0 {
-		p.client.Call("queryresults", results)
+		p.client.Call("queryResults", results)
 		return
 	}
 
-	p.client.Call("noqueryresults", nil)
+	p.client.Call("noQueryResults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {

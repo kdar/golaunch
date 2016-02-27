@@ -96,12 +96,12 @@ Plugin.prototype.query = function query(query) {
         data: localip
       });
 
-      p.client.call("queryresults", results);
+      p.client.call("queryResults", results);
     });
     return;
   }
 
-  p.client.call("noqueryresults", null);
+  p.client.call("noQueryResults", null);
 };
 
 Plugin.prototype.action = function action(action) {

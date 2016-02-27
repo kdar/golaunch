@@ -35,7 +35,7 @@ func (p *Plugin) Init(m sdk.Metadata) {
 
 func (p *Plugin) Query(q string) {
 	// if q == "helloworld" {
-	// 	p.client.Call("queryresults", sdk.QueryResult{
+	// 	p.client.Call("queryResults", sdk.QueryResult{
 	// 		Title:    "Hello back to you!",
 	// 		Subtitle: "From the helloworld plugin",
 	// 		Query:    q,
@@ -90,12 +90,12 @@ func (p *Plugin) Query(q string) {
 				}}, results...)
 			}
 
-			p.client.Call("queryresults", results)
+			p.client.Call("queryResults", results)
 			return
 		}
 	}
 
-	p.client.Call("noqueryresults", nil)
+	p.client.Call("noQueryResults", nil)
 }
 
 func (p *Plugin) Action(a sdk.Action) {
