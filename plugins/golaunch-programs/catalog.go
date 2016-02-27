@@ -183,22 +183,26 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 			name := filepath.Base(k[:len(k)-len(filepath.Ext(k))])
 			mr := fuzzy.Match(query, name)
 			if mr.Success {
-				lowName := strings.ToLower(name)
-				results = append(results, sdk.QueryResult{
-					Program:  v,
-					ID:       c.metadata.ID,
-					Title:    name,
-					Subtitle: v.Path,
-					Query:    query,
-					LowName:  lowName,
-					Score:    c.calcScore(lowName, v.Usage, mr.Score),
-					ContextMenu: append([]sdk.ContextMenuItem{{
-						Label:   name,
-						Enabled: false,
-					}, {
-						Type: "separator",
-					}}, contextmenu...),
-				})
+				if true { // if _, err := os.Stat(v.Path); err == nil {
+					lowName := strings.ToLower(name)
+					results = append(results, sdk.QueryResult{
+						Program:  v,
+						ID:       c.metadata.ID,
+						Title:    name,
+						Subtitle: v.Path,
+						Query:    query,
+						LowName:  lowName,
+						Score:    c.calcScore(lowName, v.Usage, mr.Score),
+						ContextMenu: append([]sdk.ContextMenuItem{{
+							Label:   name,
+							Enabled: false,
+						}, {
+							Type: "separator",
+						}}, contextmenu...),
+					})
+				} else {
+					c.removePath(v.Path)
+				}
 			}
 		}
 	} else {
@@ -218,22 +222,26 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 					var program sdk.Program
 					json.Unmarshal(v, &program)
 
-					lowName := strings.ToLower(name)
-					results = append(results, sdk.QueryResult{
-						Program:  program,
-						ID:       c.metadata.ID,
-						Title:    name,
-						Subtitle: program.Path,
-						Query:    query,
-						LowName:  lowName,
-						Score:    c.calcScore(lowName, program.Usage, mr.Score),
-						ContextMenu: append([]sdk.ContextMenuItem{{
-							Label:   name,
-							Enabled: false,
-						}, {
-							Type: "separator",
-						}}, contextmenu...),
-					})
+					if true { //if _, err := os.Stat(program.Path); err == nil {
+						lowName := strings.ToLower(name)
+						results = append(results, sdk.QueryResult{
+							Program:  program,
+							ID:       c.metadata.ID,
+							Title:    name,
+							Subtitle: program.Path,
+							Query:    query,
+							LowName:  lowName,
+							Score:    c.calcScore(lowName, program.Usage, mr.Score),
+							ContextMenu: append([]sdk.ContextMenuItem{{
+								Label:   name,
+								Enabled: false,
+							}, {
+								Type: "separator",
+							}}, contextmenu...),
+						})
+					} else {
+						c.removePath(program.Path)
+					}
 				}
 			}
 			return nil
@@ -246,22 +254,26 @@ func (c *Catalog) Query(query string) []sdk.QueryResult {
 		if query == k {
 			for i := 0; i < len(results); i++ {
 				if v.Path == results[i].Path {
-					name := filepath.Base(v.Path[:len(v.Path)-len(filepath.Ext(v.Path))])
-					copy(results[1:i+1], results[0:i])
-					results[0] = sdk.QueryResult{
-						Program:  v,
-						ID:       c.metadata.ID,
-						Title:    name,
-						Subtitle: v.Path,
-						Query:    query,
-						LowName:  strings.ToLower(name),
-						Score:    -1,
-						ContextMenu: append([]sdk.ContextMenuItem{{
-							Label:   name,
-							Enabled: false,
-						}, {
-							Type: "separator",
-						}}, contextmenu...),
+					if true { // if _, err := os.Stat(v.Path); err == nil {
+						name := filepath.Base(v.Path[:len(v.Path)-len(filepath.Ext(v.Path))])
+						copy(results[1:i+1], results[0:i])
+						results[0] = sdk.QueryResult{
+							Program:  v,
+							ID:       c.metadata.ID,
+							Title:    name,
+							Subtitle: v.Path,
+							Query:    query,
+							LowName:  strings.ToLower(name),
+							Score:    -1,
+							ContextMenu: append([]sdk.ContextMenuItem{{
+								Label:   name,
+								Enabled: false,
+							}, {
+								Type: "separator",
+							}}, contextmenu...),
+						}
+					} else {
+						c.removeHistory(k)
 					}
 				}
 			}
@@ -306,6 +318,15 @@ func (c *Catalog) used(qr sdk.QueryResult) error {
 
 		data, _ := json.Marshal(qr.Program)
 		return b.Put([]byte(qr.Program.Path), data)
+	})
+}
+
+func (c *Catalog) removeHistory(key string) error {
+	delete(c.history, key)
+
+	return c.historydb.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("programs"))
+		return b.Delete([]byte(key))
 	})
 }
 
