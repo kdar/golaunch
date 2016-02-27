@@ -9,10 +9,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"unicode/utf16"
-	"runtime"
 
 	"github.com/mattn/go-ole"
 	"github.com/mattn/go-ole/oleutil"
@@ -108,10 +108,10 @@ func (s *System) ResolveLink(path string) string {
 // code in here fails with apartment threads.
 func (s *System) ResolveMSILink(path string) string {
 	ch := make(chan string)
-  go func() {
+	go func() {
 		// lock the thread so we can use apartment threads
 		runtime.LockOSThread()
-	  ole.CoInitializeEx(0, COINIT_APARTMENTTHREADED | COINIT_SPEED_OVER_MEMORY)
+		ole.CoInitializeEx(0, COINIT_APARTMENTTHREADED|COINIT_SPEED_OVER_MEMORY)
 		defer ole.CoUninitialize()
 
 		path, _ = filepath.Abs(path)
@@ -121,7 +121,6 @@ func (s *System) ResolveMSILink(path string) string {
 		component := make([]uint16, 39)
 		_, err := MsiGetShortcutTarget(syscall.StringToUTF16Ptr(path), &product[0], &feature[0], &component[0])
 		if err != nil {
-			log.Println(err)
 			ch <- ""
 			return
 		}
@@ -150,7 +149,7 @@ func (s *System) RunProgram(path string, args string, dir string, user string) e
 		largs := oleutil.MustGetProperty(lcs, "Arguments").ToString()
 		lwd := oleutil.MustGetProperty(lcs, "WorkingDirectory").ToString()
 
-    // attempt to see if it's a MSI shortcut first
+		// attempt to see if it's a MSI shortcut first
 		path = s.ResolveMSILink(path)
 		if path == "" {
 			// just try to get the target path if not a MSI shortcut
