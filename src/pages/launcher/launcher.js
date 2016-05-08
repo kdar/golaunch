@@ -10,6 +10,16 @@ var baseSize = remote.getCurrentWindow().getSize();
 var pluginManager = remote.getGlobal("pluginManager");
 var themeManager = remote.getGlobal("themeManager");
 
+// var ipc = electron.ipcRenderer;
+// var msg = {
+//   title : "Awesome!",
+//   description : "Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>",
+//   width : 440,
+//   timeout : 6000,
+//   focus: true // set focus back to main window
+// };
+// ipc.send('golaunch-toast', msg);
+
 var contextmenu = new Menu();
 
 var LauncherVm = (function() {

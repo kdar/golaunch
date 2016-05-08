@@ -6,6 +6,9 @@ var globalShortcut = electron.globalShortcut;
 var plugins = require('./plugins');
 var themes = require('./themes');
 
+var Toasts = require('./components/toasts/toasts');
+var toasts = new Toasts();
+
 global["pluginManager"] = new plugins.PluginManager();
 global["themeManager"] = new themes.ThemeManager();
 
@@ -60,6 +63,8 @@ app.on('ready', function() {
       'overlayScrollbars': process.platform === 'win32'
     }
   });
+
+  toasts.init(mainWindow);
 
   pluginManager.init();
   themeManager.init();
