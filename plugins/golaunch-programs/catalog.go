@@ -90,7 +90,7 @@ func (c *Catalog) Init() error {
 
 	for _, source := range c.cfg.Sources {
 		if err := notify.Watch(filepath.Join(os.ExpandEnv(source.Path), "./..."), c.watcher, notify.FileNotifyChangeFileName); err != nil {
-			return err
+			log.Println(err)
 		}
 	}
 
