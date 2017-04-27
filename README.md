@@ -5,6 +5,10 @@ GoLaunch
 system that supports JS plugins as wells as any language that can communicate with JSON
 over stdin/stdout.
 
+![Screenshot1](https://github.com/kdar/golaunch/raw/master/doc/screenshot1.png)
+
+![Screenshot2](https://github.com/kdar/golaunch/raw/master/doc/screenshot2.png)
+
 ## Notes
 
 Only for windows (for now).
